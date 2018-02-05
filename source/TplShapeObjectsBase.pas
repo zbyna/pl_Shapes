@@ -65,7 +65,7 @@ type
   TCMDesignHitTest = TLMMouse;
 
 
-  TplDrawObject = class(TGraphicControl)
+  TplDrawObject = class(TbgraGraphicControl)                // TGraphicControl
   private
     fBitmap: TBitmap;
     fPen: TPenEx;
@@ -105,7 +105,7 @@ type
     procedure PrepareBitmap; virtual;
     procedure FontChanged(Sender: TObject); override;
   protected
-    BtnPoints: array of TPoint;
+
     SavedInfo: TSavedSizeInfo;
     procedure SetColor(aColor: TColor); virtual;
     procedure OffsetBtns(x, y: integer);
@@ -142,6 +142,7 @@ type
     property DistinctiveLastBtn: boolean read fDistinctiveLastBtn write fDistinctiveLastBtn;
     property PropStrings: TStrings read fPropStrings;
   public
+    BtnPoints: array of TPoint;  // by zbyna
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); virtual;
@@ -705,8 +706,18 @@ end;
 
 constructor TplDrawObject.Create(AOwner: TComponent);
 begin
-  inherited Create(AOwner);
+  // moved by zbyna  because sequence from inherited Create(AOwner)
+  // needs fbitmap.Width and fbitmat.height
   fBitmap := TBitmap.Create;
+  fBitmap.Transparent := True;
+  fBitmap.TransparentColor := clFuchsia;
+  fBitmap.TransparentMode := tmFixed;
+  fColorShadow := clWhite;
+  fShadowSize := -2;
+  fBitmap.Width := 100;
+  fBitmap.Height := 100;
+
+  inherited Create(AOwner);
   fPen := TPenEx.Create;
   fPen.Width := 2;
   fPen.OnChange := @PenOnChange;
@@ -728,13 +739,7 @@ begin
   //if Owner is TCustomForm then
   //  fBitmap.TransparentColor := TCustomForm(Owner).Color else
   //  fBitmap.TransparentColor := clBtnFace;
-  fBitmap.Transparent := True;
-  fBitmap.TransparentColor := clFuchsia;
-  fBitmap.TransparentMode := tmFixed;
-  fColorShadow := clWhite;
-  fShadowSize := -2;
-  fBitmap.Width := 100;
-  fBitmap.Height := 100;
+
   SetBounds(0, 0, 100, 100);
   CalcMargin; //4-dec-2005 moved up 3 lines
   BtnPoints[0] := Point(fMargin, fMargin);
