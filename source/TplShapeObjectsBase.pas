@@ -145,8 +145,8 @@ type
     BtnPoints: array of TPoint;  // by zbyna
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); virtual;
-    procedure Draw(targetCanvas: TCanvas; offsetX, offsetY: integer);
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); virtual;
+    procedure Draw(targetCanvas: TbgraCanvas; offsetX, offsetY: integer);
     function Clone: TplDrawObject;
     function BtnIdxFromPt(pt: TPoint; ignoreDisabled: boolean; out BtnIdx: integer): boolean;
     function ObjectMidPoint: TPoint;
@@ -872,7 +872,8 @@ begin
     InternalBtnMove(BtnIdx, clientPt);
 end;
 
-procedure TplDrawObject.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplDrawObject.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
+
 begin
   //override this method in descendant classes
   aCanvas.Polygon(BtnPoints);
@@ -1066,7 +1067,8 @@ begin
   fUpdateNeeded := True;
 end;
 
-procedure TplDrawObject.Draw(targetCanvas: TCanvas; offsetX, offsetY: integer);
+procedure TplDrawObject.Draw(targetCanvas: TbgraCanvas; offsetX, offsetY: integer);
+
 begin
   with targetCanvas do
   begin

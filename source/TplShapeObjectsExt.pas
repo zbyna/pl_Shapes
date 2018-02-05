@@ -21,7 +21,7 @@ type
     xmin, ymin, xmax, ymax: integer;
     targetParent: TControl;
   protected
-    procedure DrawObject(Canvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(Canvas: TbgraCanvas; IsShadow: boolean); override;
     procedure GroupDrawObjects(drawObjectComponents: array of TplDrawObject); virtual;
     procedure ExtendGroup(aDraw: TplDrawObject);
     function CheckDrawObjectGroup(drawObjectComponents: array of TplDrawObject): boolean; virtual;
@@ -38,7 +38,7 @@ implementation
 
 { TplDrawObjectComposite }
 
-procedure TplDrawObjectComposite.DrawObject(Canvas: TCanvas; IsShadow: boolean);
+procedure TplDrawObjectComposite.DrawObject(Canvas: TbgraCanvas; IsShadow: boolean);
 var
   iComp: integer;
   aComp: TComponent;

@@ -21,7 +21,7 @@ type
     fArrowFill: Boolean;
     procedure SetArrowSize(const Val:Cardinal);
     procedure SetArrowFill(const Val:Boolean);
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure SetButtonCount(Count: integer); override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -41,7 +41,7 @@ type
     procedure SetArrowFill(const Val:Boolean);
     procedure SetAutoCenter(AutoCenter: boolean);
   protected
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
     procedure UpdateNonEndButtonsAfterBtnMove; override;
     procedure DoQuadPtConnection; override;
@@ -65,7 +65,7 @@ type
     fArrowFill: Boolean;
     procedure SetArrowSize(const Val:Cardinal);
     procedure SetArrowFill(const Val:Boolean);
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure SaveToPropStrings; override;
     procedure DoQuadPtConnection; override;
   public
@@ -91,7 +91,7 @@ type
     procedure SetArrow2(Arrow: boolean); override;
     procedure SetButtonCount(Count: integer); override;
     procedure DrawControlLines; override;
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
     procedure UpdateConnectionPoints(MovingConnection: TplSolid); override;
     procedure SaveToPropStrings; override;
@@ -117,7 +117,7 @@ type
     procedure SetArrow1(Arrow: boolean); override;
     procedure SetArrow2(Arrow: boolean); override;
     procedure SetUseHitTest(Value: boolean); override;
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure SaveToPropStrings; override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -144,7 +144,7 @@ type
     procedure SetArrow1(Arrow: boolean); override;
     procedure SetArrow2(Arrow: boolean); override;
     procedure SetUseHitTest(Value: boolean); override;
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure SaveToPropStrings; override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -167,7 +167,7 @@ type
     procedure SetAngle2(ang2: integer);
     procedure SetRegular(Value: boolean);
   protected
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
     procedure SaveToPropStrings; override;
   public
@@ -194,7 +194,7 @@ type
     function GetAngle: integer;
     procedure SetAngle(angle: integer);
   protected
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure SaveToPropStrings; override;
     procedure BinaryDataLoaded; override;
   public
@@ -217,7 +217,7 @@ type
   protected
     procedure CalcMargin; override;
     procedure AddConnector(Connector: TplConnector); override;
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
   public
     constructor Create(AOwner: TComponent); override;
   end;
@@ -228,7 +228,7 @@ type
   protected
     procedure DrawStringsInDiamond(aCanvas: TCanvas; aStrings: TStrings);
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
   public
     constructor Create(AOwner: TComponent); override;
     function ClosestScreenPt(FromScreenPt: TPoint): TPoint; override;
@@ -246,7 +246,7 @@ type
   protected
     procedure DrawStringsInRect(aCanvas: TCanvas; aStrings: TStrings);
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure SaveToPropStrings; override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -263,7 +263,7 @@ type
     function GetStrings: TStrings;
     procedure SetStrings(astrings: TStrings);
   protected
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -280,10 +280,11 @@ type
     procedure SetAngle(aangle: integer); override;
     procedure DrawStringsInEllipse(acanvas: TCanvas; aStrings: TStrings);
     procedure SeTplBezierButtons;
-    procedure DrawObject(aCanvas: TCanvas; IsShadow: boolean); override;
+
     procedure SaveToPropStrings; override;
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
   public
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;  //by zbyna
     constructor Create(AOwner: TComponent); override;
     function ClosestScreenPt(FromScreenPt: TPoint): TPoint; override;
     function ResizeObjectToFiTText: boolean; override;
@@ -1161,7 +1162,7 @@ begin
   ResizeNeeded;
 end;
 
-procedure TplSolidPoint.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplSolidPoint.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   pw: integer;
 begin
@@ -1255,7 +1256,7 @@ begin
   ResizeNeeded;
 end;
 
-procedure TplLine.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplLine.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   startPt, endPt: TPoint;
 begin
@@ -1566,7 +1567,7 @@ begin
   UpdateNeeded;
 end;
 
-procedure TplZLine.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplZLine.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   startPt, endPt: TPoint;
 begin
@@ -1644,7 +1645,7 @@ begin
   //disable rotate() for TplLLine
 end;
 
-procedure TplLLine.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplLLine.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   startPt, endPt, midPt: TPoint;
 begin
@@ -1880,7 +1881,7 @@ end;
   Canvas.PolyBezier( BtnPoints); }
 
 
-procedure TplBezier.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplBezier.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   startPt, endPt: TPoint;
 begin
@@ -2042,7 +2043,7 @@ begin
   UpdateNeeded;
 end;
 
-procedure TplSolidBezier.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplSolidBezier.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 begin
   with aCanvas do
   begin
@@ -2148,7 +2149,7 @@ begin
   //do nothing
 end;
 
-procedure TplTextBezier.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplTextBezier.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   s: string;
   SavedColor: TColor;
@@ -2200,7 +2201,7 @@ begin
   DoSaveInfo;
 end;
 
-procedure TplArc.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplArc.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   mp, pt1, pt2: TPoint;
 begin
@@ -2489,7 +2490,7 @@ begin
 end;
 
 
-procedure TplDiamond.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplDiamond.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 begin
   with acanvas do
   begin
@@ -2676,7 +2677,7 @@ begin
     PrintBitmapROP(DestCanvas, DestRect, Bitmap, SRCCOPY);
 end;
 
-procedure TplDrawPicture.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplDrawPicture.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   tmpRect: TRect;
 begin
@@ -3117,7 +3118,7 @@ begin
   end;
 end;
 
-procedure TplRectangle.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplRectangle.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   tmpRect: TRect;
   minRadius: integer;
@@ -3194,7 +3195,7 @@ begin
   ResizeObjectToFiTText;
 end;
 
-procedure TplText.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplText.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   SavedColor: TColor;
   stringsToParse: TStrings;
@@ -3389,7 +3390,8 @@ begin
 end;
 
 
-procedure TplEllipse.DrawObject(aCanvas: TCanvas; IsShadow: boolean);
+procedure TplEllipse.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
+
 var
   pt1, pt2, pt3: TPoint;
   dx, dy: integer;
