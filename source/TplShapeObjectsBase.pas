@@ -987,7 +987,7 @@ var
   BtnRect: TRect;
 begin
   BtnRect := BtnRectFromPt(BtnPt, fBtnSize);
-  with canvas do
+  with inherited Bitmap.CanvasBGRA do    // by zbyna
   begin
     if Focused or (fPressedBtnIdx >= 0) or Moving then
     begin
@@ -1098,14 +1098,20 @@ begin
 end;
 
 procedure TplDrawObject.PrepareBitmap;
+var
+  pom:TBGRABitmap;
 begin
   { DONE -oTC -cLazarus_Port_Step2 : Bitmap needs a transparent color identical to the color of the owner. }
   //fBitmap.canvas.brush.Color := fBitmap.TransparentColor and $FFFFFF;
   fBitmap.canvas.brush.Color := fBitmap.TransparentColor;
   fBitmap.canvas.FillRect(ClientRect);
-  Draw(fBitmap.canvas, 0, 0);
+  pom:=TBGRABitmap.Create(fBitmap,true);
+  inherited Bitmap.Assign(pom);
+  pom.Destroy;
+  Draw(inherited Bitmap.CanvasBGRA,0,0);
   invalidate;
   fUpdateNeeded := False;
+  inherited Bitmap.Draw(fbitmap.canvas,0,0,False);
 end;
 
 procedure TplDrawObject.SetPen(Value: TPenEx);
