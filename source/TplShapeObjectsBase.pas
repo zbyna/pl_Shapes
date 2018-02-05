@@ -9,7 +9,7 @@ interface
 
 uses
   SysUtils, Classes, LMessages, Controls, Graphics, Math,
-  Forms, TypInfo, ZLib;
+  Forms, TypInfo, ZLib,BGRABitmap,BGRACanvas,BGRAGraphicControl,BGRABitmapTypes;
 
 const
 

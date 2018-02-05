@@ -10,7 +10,7 @@ unit TplShapeObjectsExt;
 interface
 
 uses
-  Classes, SysUtils, Controls, Graphics, TplShapeObjectsBase;
+  Classes, SysUtils, Controls, Graphics, TplShapeObjectsBase,BGRACanvas;
 
 type
 

@@ -9,6 +9,7 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
+        <IncludeFiles Value="..\pl_BGRAcontrols"/>
         <OtherUnitFiles Value="source"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
       </SearchPaths>
@@ -69,17 +70,20 @@ for CodeTyphon Studio
         <Type Value="Include"/>
       </Item9>
     </Files>
-    <RequiredPkgs Count="3">
+    <RequiredPkgs Count="4">
       <Item1>
-        <PackageName Value="bs_ideintf"/>
+        <PackageName Value="pl_bgracontrols"/>
       </Item1>
       <Item2>
-        <PackageName Value="adLCL"/>
+        <PackageName Value="bs_ideintf"/>
       </Item2>
       <Item3>
+        <PackageName Value="adLCL"/>
+      </Item3>
+      <Item4>
         <PackageName Value="adFCL"/>
         <MinVersion Major="1" Valid="True"/>
-      </Item3>
+      </Item4>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

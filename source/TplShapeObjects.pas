@@ -9,7 +9,8 @@ interface
 
 uses
   SysUtils, Classes, LMessages, Controls, Graphics, Math,
-  Forms, TypInfo, Dialogs, TplShapeObjectsBase;
+  Forms, TypInfo, Dialogs, TplShapeObjectsBase,BGRABitmap,BGRABitmapTypes,
+  BGRACanvas;
 
 type
   TFontOutLine = (foNone, foClear, foColored);
