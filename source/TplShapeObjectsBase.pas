@@ -271,7 +271,7 @@ type
     function GetAngle: integer;
   protected
     procedure SetAngle(angle: integer); virtual;
-    procedure RotatedTextAtPt(aCanvas: TCanvas; x, y: integer; const s: string);
+    procedure RotatedTextAtPt(aCanvas: TbgraCanvas; x, y: integer; const s: string);
     procedure DrawBtn(BtnPt: TPoint; index: integer; Pressed, LastBtn: boolean); override;
     function IsValidBtnDown(BtnIdx: integer): boolean; override;
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
@@ -1938,7 +1938,7 @@ begin
   EndTransform;
 end;
 
-procedure TplSolidWithText.RotatedTextAtPt(aCanvas: TCanvas; x, y: integer; const s: string);
+procedure TplSolidWithText.RotatedTextAtPt(aCanvas: TbgraCanvas; x, y: integer; const s: string);
 var
   lf: TLogFont;
   OldFontHdl, NewFontHdl: HFont;
