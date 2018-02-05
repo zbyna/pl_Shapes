@@ -555,7 +555,7 @@ begin
     Result.Y := pt1.Y + round((pt2.Y - pt1.Y) * relativeDistFRomPt1);
 end;
 
-procedure AngledCharOut(Canvas: TCanvas; pt: TPoint; c: char; radians: single; offsetX, offsetY: integer; ouTplLine: TFontOutLine);
+procedure AngledCharOut(Canvas: TbgraCanvas; pt: TPoint; c: char; radians: single; offsetX, offsetY: integer; ouTplLine: TFontOutLine);
 var
   lf: TLogFont;
   OldFontHdl, NewFontHdl: HFont;
@@ -620,7 +620,7 @@ type
   Integers = array[0.. (maxInt div sizeof(integer)) - 1] of integer;
   PIntegers = ^Integers;
 
-procedure TextAlongBezier(canvas: TCanvas; bezierPts: array of TPoint; s: string; curveOffset: integer; ouTplLine: TFontOutLine);
+procedure TextAlongBezier(canvas: TbgraCanvas; bezierPts: array of TPoint; s: string; curveOffset: integer; ouTplLine: TFontOutLine);
 var
   i, j, ptCnt, sLenPxls, sLen: integer;
   currentInsertionDist, charWidthDiv2: integer;
@@ -833,7 +833,7 @@ end;
 
 //TrimLine: Splits off from LS any characters beyond the allowed width
 //breaking at the end of a word if possible. Leftover chars -> RS.
-procedure TrimLine(canvas: TCanvas; var ls: string; out rs: string; LineWidthInPxls: integer);
+procedure TrimLine(canvas: TbgraCanvas; var ls: string; out rs: string; LineWidthInPxls: integer);
 var
   i, len, NumCharWhichFit: integer;
   dummy: TSize;
