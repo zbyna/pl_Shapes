@@ -226,7 +226,7 @@ type
   private
     procedure SeTplDiamondPts;
   protected
-    procedure DrawStringsInDiamond(aCanvas: TCanvas; aStrings: TStrings);
+    procedure DrawStringsInDiamond(aCanvas: TbgraCanvas; aStrings: TStrings);
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
     procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
   public
@@ -244,7 +244,7 @@ type
     procedure SetRounded(Rounded: boolean);
     procedure SeTplRectanglePts;
   protected
-    procedure DrawStringsInRect(aCanvas: TCanvas; aStrings: TStrings);
+    procedure DrawStringsInRect(aCanvas: TbgraCanvas; aStrings: TStrings);
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
     procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure SaveToPropStrings; override;
@@ -278,7 +278,7 @@ type
     procedure SetRegular(Value: boolean);
   protected
     procedure SetAngle(aangle: integer); override;
-    procedure DrawStringsInEllipse(acanvas: TCanvas; aStrings: TStrings);
+    procedure DrawStringsInEllipse(acanvas: TbgraCanvas; aStrings: TStrings);
     procedure SeTplBezierButtons;
 
     procedure SaveToPropStrings; override;
@@ -2354,7 +2354,7 @@ begin
 end;
 
 
-procedure TplDiamond.DrawStringsInDiamond(aCanvas: TCanvas; aStrings: TStrings);
+procedure TplDiamond.DrawStringsInDiamond(aCanvas: TbgraCanvas; aStrings: TStrings);
 var
   YPos, YLimit, lineHeight, space, VertSpace, pad, XCenter, YCenter, MaxX: integer;
   ls, rs: string;
@@ -3054,7 +3054,7 @@ begin
   SeTplRectanglePts;
 end;
 
-procedure TplRectangle.DrawStringsInRect(aCanvas: TCanvas; aStrings: TStrings);
+procedure TplRectangle.DrawStringsInRect(aCanvas: TbgraCanvas; aStrings: TStrings);
 var
   i, YPos, YLimit, lineHeight, space, pad, XCenter: integer;
   ls, rs: string;
@@ -3289,7 +3289,7 @@ begin
   ResizeNeeded;
 end;
 
-procedure TplEllipse.DrawStringsInEllipse(acanvas: TCanvas; aStrings: TStrings);
+procedure TplEllipse.DrawStringsInEllipse(acanvas: TbgraCanvas; aStrings: TStrings);
 var
   rad_horz, rad_vert: integer;
   XPos, YPos, XCenter, YCenter, lineHeight, space, vertSpace, pad: integer;
