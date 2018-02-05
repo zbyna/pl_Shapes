@@ -1468,6 +1468,7 @@ var
   end;
 
 begin
+  btnsStr:=''; // by zbyna  to clean garbage added during save
   PropStrings.Clear; //start afresh
   PropStrings.Add('[' + ClassName + ':' + Name + ']');
   for i := 0 to ButtonCount - 1 do
