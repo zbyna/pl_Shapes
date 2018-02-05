@@ -728,7 +728,7 @@ end;
 
 //This DrawArrowHead() function is loosely based on code downloaded from
 //http://www.efg2.com/Lab/Library/Delphi/Graphics/Algorithms.htm
-procedure DrawArrowHead(aCanvas: TCanvas; FromPoint, ToPoint: TPoint; HeadSize: cardinal; SolidArrowHead: boolean);
+procedure DrawArrowHead(aCanvas: TbgraCanvas; FromPoint, ToPoint: TPoint; HeadSize: cardinal; SolidArrowHead: boolean);
 var
   xbase: integer;
   xLineDelta: double;
@@ -2602,7 +2602,7 @@ begin
 end;
 
 
-procedure PrintBitmapROP(DestCanvas: TCanvas; DestRect: TRect; Bitmap: TBitmap; rop: cardinal);
+procedure PrintBitmapROP(DestCanvas: TbgraCanvas; DestRect: TRect; Bitmap: TBitmap; rop: cardinal);
 var
   BitmapHeader: pBitmapInfo;
   BitmapImage: POINTER;
@@ -2633,7 +2633,7 @@ begin
   end;
 end;
 
-procedure PrintBitmap(DestCanvas: TCanvas; DestRect: TRect; Bitmap: TBitmap);
+procedure PrintBitmap(DestCanvas: TbgraCanvas; DestRect: TRect; Bitmap: TBitmap);
 var
   transpClr: TColor;
   mask: TBitmap;
