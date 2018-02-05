@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="pl_shapes"/>
+    <Type Value="RunAndDesignTime"/>
+    <Author Value="PilotLogic Software House"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <OtherUnitFiles Value="source"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <CStyleOperator Value="False"/>
+          <UseAnsiStrings Value="False"/>
+        </SyntaxOptions>
+      </Parsing>
+      <Other>
+        <Verbosity>
+          <ShowWarn Value="False"/>
+          <ShowNotes Value="False"/>
+          <ShowHints Value="False"/>
+        </Verbosity>
+      </Other>
+    </CompilerOptions>
+    <Description Value="Shapes Components 
+for CodeTyphon Studio
+"/>
+    <Version Major="5" Minor="7" Release="1"/>
+    <Files Count="9">
+      <Item1>
+        <Filename Value="source\AllplShapesRegister.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="AllplShapesRegister"/>
+      </Item1>
+      <Item2>
+        <Filename Value="source\TplFillShapeUnit.pas"/>
+        <UnitName Value="TplFillShapeUnit"/>
+      </Item2>
+      <Item3>
+        <Filename Value="source\TplShapeLineUnit.pas"/>
+        <UnitName Value="TplShapeLineUnit"/>
+      </Item3>
+      <Item4>
+        <Filename Value="source\TplShapeObjects.pas"/>
+        <UnitName Value="TplShapeObjects"/>
+      </Item4>
+      <Item5>
+        <Filename Value="source\TplShapeObjectsBase.pas"/>
+        <UnitName Value="TplShapeObjectsBase"/>
+      </Item5>
+      <Item6>
+        <Filename Value="source\TplShapeObjectsExt.pas"/>
+        <UnitName Value="TplShapeObjectsExt"/>
+      </Item6>
+      <Item7>
+        <Filename Value="source\TplShapesUnit.pas"/>
+        <UnitName Value="TplShapesUnit"/>
+      </Item7>
+      <Item8>
+        <Filename Value="source\wAngleShapes.inc"/>
+        <Type Value="Include"/>
+      </Item8>
+      <Item9>
+        <Filename Value="source\wNoAngleShapes.inc"/>
+        <Type Value="Include"/>
+      </Item9>
+    </Files>
+    <RequiredPkgs Count="3">
+      <Item1>
+        <PackageName Value="bs_ideintf"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="adLCL"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="adFCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item3>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
