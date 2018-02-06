@@ -3475,6 +3475,7 @@ var
   end;
 
 begin
+
   with acanvas do
   begin
     if SavedInfo.AngleInDegrees <> 0 then
@@ -3487,20 +3488,22 @@ begin
         BtnPoints[11], BtnPoints[12], BtnPoints[13], BtnPoints[14]]);
       //EndPath(Handle);
       //if Brush.Style = bsClear then
-      //  StrokePath(Handle) else
+        //StrokePath(Handle) else
       //  StrokeAndFillPath(Handle);
     end
     else
     begin
+      // by zbyna not filled elipse
+      aCanvas.Brush.Style:=bsClear; // bsSolid for filled
       ellipse(BtnPoints[0].X, BtnPoints[0].Y, BtnPoints[1].X, BtnPoints[1].Y);
       if (fBalloonPoint <> bpNone) then
         DrawBalloonExtension;
     end;
-
     if IsShadow or (Strings.Count = 0) then
       exit;
     DrawStringsInEllipse(aCanvas, Strings);
   end;
+
 end;
 
 
