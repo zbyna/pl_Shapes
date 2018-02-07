@@ -2580,10 +2580,23 @@ end;
 
 
 procedure TplDrawPicture.LoadPicFromDataStream;
+var
+  pomPic:Tpicture;
 begin
   try
     DataStream.Position := 0;
-    fPic.LoadFromStream(DataStream);
+    pomPic:=TPicture.Create;
+    pomPic.LoadFromStream(DataStream);
+    // not found way to load bmp both with TBGRABitmap and TPicture - Strange :-)
+    if pomPic.Bitmap.GetFileExtensions = 'bmp' then
+       begin
+          DataStream.Position := 0;
+          fPic.LoadFromStream(DataStream);
+       end
+    else
+        fPic.Assign(pomPic.Bitmap);
+    pomPic.Destroy;
+
     if not fStretch then
     begin
       if not BlockResize then //ie: BlockResize when loading from *.dob file
