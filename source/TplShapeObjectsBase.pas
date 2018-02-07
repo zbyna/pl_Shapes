@@ -243,11 +243,15 @@ type
 
   TplConnectorClass = class of TplConnector;
 
+  { TplSolid }
+
   TplSolid = class(TplDrawObject)
   private
     fCanConnect: boolean;
     fConnectorList: TList;
+    fFilled:Boolean;
     procedure RemoveConnector(Connector: TplConnector);
+    procedure SetFilled(AValue: boolean);
   protected
     procedure AddConnector(Connector: TplConnector); virtual;
     procedure Resize; override;
@@ -258,6 +262,8 @@ type
     function ClosestScreenPt(FromScreenPt: TPoint): TPoint; virtual;
     function QuadScreenPt(QuadConnect: TQuadConnection): TPoint; virtual;
     property ConnectorList: TList read fConnectorList;
+  published
+    property Filled: boolean read fFilled write SetFilled;
   end;
 
   TplSolidWithText = class(TplSolid)
@@ -1780,6 +1786,7 @@ constructor TplSolid.Create(AOwner: TComponent);
 begin
   inherited;
   fCanConnect := True;
+  fFilled:=False;
 end;
 
 destructor TplSolid.Destroy;
@@ -1806,6 +1813,13 @@ begin
   idx := fConnectorList.IndexOf(Connector);
   if idx >= 0 then
     fConnectorList.Delete(idx);
+end;
+
+procedure TplSolid.SetFilled(AValue: boolean);
+begin
+  if fFilled=AValue then Exit;
+  fFilled:=AValue;
+  UpdateNeeded;
 end;
 
 procedure TplSolid.Resize;
