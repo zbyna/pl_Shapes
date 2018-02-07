@@ -320,6 +320,8 @@ type
     property Regular: boolean read fPlainPoly write SetPlainPoly;
   end;
 
+  { TplSolidArrow }
+
   TplSolidArrow = class(TplSolid)
   private
     fWasRotated: boolean;
@@ -327,6 +329,7 @@ type
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
   public
     constructor Create(AOwner: TComponent); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     procedure Rotate(degrees: integer); override;
   end;
 
@@ -3809,6 +3812,15 @@ begin
   BtnPoints[5] := Point(BtnPoints[1].X, BtnPoints[4].Y);
   BtnPoints[6] := Point(BtnPoints[1].X, Height - Margin);
   DoSaveInfo;
+end;
+
+procedure TplSolidArrow.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
+begin
+  if self.Filled then
+         aCanvas.Brush.Style:=bsSolid
+      else
+          aCanvas.Brush.Style:=bsClear;
+  aCanvas.Polygon(BtnPoints);
 end;
 
 procedure TplSolidArrow.InternalBtnMove(BtnIdx: integer; NewPt: TPoint);
