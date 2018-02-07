@@ -2653,6 +2653,7 @@ var
   mask: TBitmap;
   oldMode: integer;
   oldColor: cardinal;
+  pom:TBGRABitmap;
 const
   CAPS1 = 94;
   C1_TRANSPARENT = 1;
@@ -2685,7 +2686,9 @@ begin
     //    mask.Free;
     //  end;
     //end;
-
+    pom:=TBGRABitmap.Create(Bitmap,false);
+    DestCanvas.Draw(0,0,pom);
+    pom.Destroy;
   end
   else
     PrintBitmapROP(DestCanvas, DestRect, Bitmap, SRCCOPY);
