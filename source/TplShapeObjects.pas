@@ -2494,6 +2494,10 @@ procedure TplDiamond.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 begin
   with acanvas do
   begin
+    if self.Filled then
+         aCanvas.Brush.Style:=bsSolid
+      else
+          aCanvas.Brush.Style:=bsClear;
     Polygon([BtnPoints[2], BtnPoints[3], BtnPoints[4], BtnPoints[5]]);
     if IsShadow or (Strings.Count = 0) then
       exit;
@@ -3127,6 +3131,10 @@ begin
   begin
     tmpRect.TopLeft := BtnPoints[0];
     tmpRect.BottomRight := BtnPoints[1];
+    if self.Filled then
+         aCanvas.Brush.Style:=bsSolid
+      else
+          aCanvas.Brush.Style:=bsClear;
 
     if fRounded and (Angle = 0) then //nb: can't 'round' rotated rectangles
     begin
@@ -3478,6 +3486,10 @@ begin
 
   with acanvas do
   begin
+    if self.Filled then
+         aCanvas.Brush.Style:=bsSolid
+      else
+          aCanvas.Brush.Style:=bsClear;
     if SavedInfo.AngleInDegrees <> 0 then
     begin
       { TODO -oTC -cLazarus_Port_Step2 : function BeginPath needs to be ported! }
@@ -3493,8 +3505,6 @@ begin
     end
     else
     begin
-      // by zbyna not filled elipse
-      aCanvas.Brush.Style:=bsClear; // bsSolid for filled
       ellipse(BtnPoints[0].X, BtnPoints[0].Y, BtnPoints[1].X, BtnPoints[1].Y);
       if (fBalloonPoint <> bpNone) then
         DrawBalloonExtension;
