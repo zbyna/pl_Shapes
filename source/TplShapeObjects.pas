@@ -2215,6 +2215,10 @@ begin
 
   with acanvas do
   begin
+     if self.Filled then
+         aCanvas.Brush.Style:=bsSolid
+      else
+          aCanvas.Brush.Style:=bsClear;
     Pie(BtnPoints[0].X, BtnPoints[0].Y, BtnPoints[1].X, BtnPoints[1].Y,
       pt1.X, pt1.Y, pt2.X, pt2.Y);
   end;
