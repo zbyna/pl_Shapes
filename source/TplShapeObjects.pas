@@ -294,6 +294,8 @@ type
     property Regular: boolean read fRegular write SetRegular;
   end;
 
+  { TplPolygon }
+
   TplPolygon = class(TplSolid)
   private
     fPlainPoly: boolean;
@@ -307,6 +309,7 @@ type
     function IsValidBtnDown(BtnIdx: integer): boolean; override;
   public
     constructor Create(AOwner: TComponent); override;
+    procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;
     function ClosestScreenPt(FromScreenPt: TPoint): TPoint; override;
     procedure DuplicateButton(btnIdx: integer); virtual;
     procedure RemoveButton(btnIdx: integer); virtual;
@@ -3622,6 +3625,17 @@ begin
   InternalSetCount(5);
   InitializePoints;
 end;
+
+procedure TplPolygon.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
+
+begin
+  if self.Filled then
+         aCanvas.Brush.Style:=bsSolid
+      else
+          aCanvas.Brush.Style:=bsClear;
+  aCanvas.Polygon(BtnPoints);
+end;
+
 
 function TplPolygon.ClosestScreenPt(FromScreenPt: TPoint): TPoint;
 var
