@@ -67,7 +67,7 @@ type
 
   TplDrawObject = class(TbgraGraphicControl)                // TGraphicControl
   private
-    fBitmap: TBitmap;
+    fBitmap: TBGRABitmap;
     fPen: TPenEx;
     fPropStrings: TStrings;
     fBtnCount: integer;
@@ -101,7 +101,7 @@ type
     procedure SetShadowSize(size: integer);
     procedure SetColorShadow(aColor: TColor);
     function GetColor: TColor;
-    function GetBitmap: TBitmap;
+    function GetBitmap: TbgraBitmap;
     procedure PrepareBitmap; virtual;
     procedure FontChanged(Sender: TObject); override;
   protected
@@ -158,7 +158,7 @@ type
     procedure Zoom(percent: integer); virtual;
     property ButtonCount: integer read fBtnCount;
     property PressedBtnIdx: integer read fPressedBtnIdx;
-    property Bitmap: TBitmap read GetBitmap;
+    property Bitmap: TbgraBitmap read GetBitmap;
     property CanMove: boolean read GetCanMove;
     property Margin: integer read fMargin write fMargin;
     property Moving: boolean read fMoving;
@@ -714,14 +714,9 @@ constructor TplDrawObject.Create(AOwner: TComponent);
 begin
   // moved by zbyna  because sequence from inherited Create(AOwner)
   // needs fbitmap.Width and fbitmat.height
-  fBitmap := TBitmap.Create;
-  fBitmap.Transparent := True;
-  fBitmap.TransparentColor := clFuchsia;
-  fBitmap.TransparentMode := tmFixed;
+  fBitmap:=TBGRABitmap.Create(100,100);
   fColorShadow := clWhite;
   fShadowSize := -2;
-  fBitmap.Width := 100;
-  fBitmap.Height := 100;
 
   inherited Create(AOwner);
   fPen := TPenEx.Create;
@@ -741,10 +736,6 @@ begin
   fCanFocus := True;
   ParentColor := False;
   inherited Color := clWhite;
-  { DONE -oTC -cLazarus_Step_Port1 : Bitmap transparency seems not to work on clBtnFace. Used clFuchsia instead. }
-  //if Owner is TCustomForm then
-  //  fBitmap.TransparentColor := TCustomForm(Owner).Color else
-  //  fBitmap.TransparentColor := clBtnFace;
 
   SetBounds(0, 0, 100, 100);
   CalcMargin; //4-dec-2005 moved up 3 lines
@@ -927,8 +918,7 @@ end;
 procedure TplDrawObject.Loaded;
 begin
   inherited;
-  fBitmap.Width := Width;
-  fBitmap.Height := Height;
+  fBitmap.SetSize(width,Height);
   fResizeNeeded := False;
   DoSaveInfo;
 end;
@@ -957,8 +947,7 @@ begin
       ratioH := 1
     else
       ratioH := (Height - margX2) / (SavedInfo.SavedHeight - margX2);
-    fBitmap.Width := Width;
-    fBitmap.Height := Height;
+    fBitmap.SetSize(width,Height);
     for i := 0 to ButtonCount - 1 do
     begin
       BtnPoints[i].X := round((SavedInfo.SavedPts[i].X - fMargin) * ratioW) + fMargin;
@@ -1050,8 +1039,7 @@ begin
     Bottom := Bottom - Top; //ie bottom = height
     if (Left <> self.Left) or (Top <> self.Top) or (Right <> self.Width) or (Bottom <> self.Height) then
     begin
-      fBitmap.Width := Right;
-      fBitmap.Height := Bottom;
+      fBitmap.SetSize(right,bottom);
       fBlockResize := True; //blocks scaling while resizing Bitmap
       try
         //todo - reorder InternalResize logic to come AFTER
@@ -1208,7 +1196,7 @@ begin
   UpdateNeeded;
 end;
 
-function TplDrawObject.GetBitmap: TBitmap;
+function TplDrawObject.GetBitmap: TbgraBitmap;
 begin
   if fUpdateNeeded then
     PrepareBitmap;
@@ -1701,8 +1689,7 @@ begin
     fBlockResize := False;
     fResizeNeeded := False;
   end;
-  fBitmap.Width := Width;
-  fBitmap.Height := Height;
+  fbitmap.SetSize(width,Height);
   UpdateNeeded;
   DoSaveInfo;
 end;
