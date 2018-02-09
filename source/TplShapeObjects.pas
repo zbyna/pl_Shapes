@@ -183,7 +183,8 @@ type
 
   TplDrawPicture = class(TplSolid)
   private
-    fPic: TBitmap;
+    //fPic: TBitmap;
+    fpic:TBGRABitmap;
     fStretch: boolean;
     fTransparent: boolean;
     fTightConnections: boolean;
@@ -926,8 +927,8 @@ begin
 end;
 
 //Rotate  a bitmap about an arbritray center point;
-procedure RotateBitmap(const BitmapOriginal: TBitMap;//input bitmap (possibly converted)
-  out BitMapRotated: TBitMap; //output bitmap
+procedure RotateBitmap(const BitmapOriginal: TbgraBitMap;//input bitmap (possibly converted)
+  out BitMapRotated: TbgraBitMap; //output bitmap
   const theta: single;  // rotn angle in radians counterclockwise in windows
   const oldAxis: TPOINT;   // center of rotation in pixels, rel to bmp origin
   var newAxis: TPOINT);  // center of rotated bitmap, relative to bmp origin
@@ -2544,10 +2545,8 @@ end;
 constructor TplDrawPicture.Create(AOwner: TComponent);
 begin
   inherited;
-  fPic := TBitmap.Create;
+  fpic := TBGRABitmap.create;
   DataStream := TMemoryStream.Create;
-  fTransparent := True;
-  fPic.Transparent := True;
   Pen.Width := 1;
   ShadowSize := 0;
   DoSaveInfo;
@@ -2607,8 +2606,7 @@ begin
         SetBounds(left, top, BtnPoints[1].X + Margin, BtnPoints[1].Y + Margin);
         BlockResize := False;
       end;
-      Bitmap.Width := Width;
-      Bitmap.Height := Height;
+      Bitmap.SetSize(Width,Height);
     end;
   except
     DataStream.Size := 0;
@@ -2629,7 +2627,7 @@ begin
 end;
 
 
-procedure PrintBitmapROP(DestCanvas: TbgraCanvas; DestRect: TRect; Bitmap: TBitmap; rop: cardinal);
+procedure PrintBitmapROP(DestCanvas: TbgraCanvas; DestRect: TRect; Bitmap: TbgraBitmap; rop: cardinal);
 var
   BitmapHeader: pBitmapInfo;
   BitmapImage: POINTER;
@@ -2660,21 +2658,21 @@ begin
   end;
 end;
 
-procedure PrintBitmap(DestCanvas: TbgraCanvas; DestRect: TRect; Bitmap: TBitmap);
+procedure PrintBitmap(DestCanvas: TbgraCanvas; DestRect: TRect; Bitmap: TbgraBitmap);
 var
   transpClr: TColor;
   mask: TBitmap;
   oldMode: integer;
   oldColor: cardinal;
-  pom:TBGRABitmap;
 const
   CAPS1 = 94;
   C1_TRANSPARENT = 1;
   NEWTRANSPARENT = 3;
 begin
-  if Bitmap.Transparent then
+  //if Bitmap.Transparent then
+  if True then    // should think about it :-)
   begin
-    transpClr := Bitmap.TransparentColor and $FFFFFF;
+    //transpClr := Bitmap.TransparentColor and $FFFFFF;
 
     { TODO -oTC -cLazarus_Port_Step2 : GetDeviceCaps is specific to Windows. Not used. }
     //if (GetDeviceCaps(DestCanvas.Handle, CAPS1) and C1_TRANSPARENT) <> 0 then
@@ -2699,9 +2697,7 @@ begin
     //    mask.Free;
     //  end;
     //end;
-    pom:=TBGRABitmap.Create(Bitmap,false);
-    DestCanvas.Draw(0,0,pom);
-    pom.Destroy;
+    DestCanvas.Draw(0,0,Bitmap);
   end
   else
     PrintBitmapROP(DestCanvas, DestRect, Bitmap, SRCCOPY);
@@ -2747,7 +2743,6 @@ begin
   if Transparent = fTransparent then
     exit;
   fTransparent := Transparent;
-  fPic.Transparent := fTransparent;
   UpdateNeeded;
 end;
 
@@ -2767,9 +2762,10 @@ var
   slope: single;
 begin
   Result := inherited ClosestScreenPt(FromScreenPt);
-  if not fTightConnections or not fPic.Transparent or Stretch then
+  if not fTightConnections or not fTransparent or Stretch then
     exit;
-  trnspClr := fPic.TransparentColor and $FFFFFF;
+  //trnspClr := fPic.TransparentColor and $FFFFFF;
+  trnspClr := clBackground;
 
 
   Result := ScreenToClient(Result);
@@ -2844,7 +2840,8 @@ end;
 
 function TplDrawPicture.MergeDrawObjImage(DrawObj: TplDrawObject; TransparentClr: TColor): boolean;
 var
-  bmp: TBitmap;
+  //bmp: TBitmap;
+  bmp :TBGRABitmap;
   l, t, w, h: integer;
 begin
   Result := assigned(DrawObj) and DrawObj.Visible and (DrawObj.Parent = Parent);
@@ -2862,17 +2859,18 @@ begin
   w := max(DrawObj.Left + DrawObj.Width, Left + Width - Margin) - l;
   h := max(DrawObj.Top + DrawObj.Height, Top + Height - Margin) - t;
 
-  bmp := TBitmap.Create;
+
+  bmp:= TBGRABitmap.create(w,h);
   try
-    bmp.Width := w;
-    bmp.Height := h;
-    bmp.Canvas.Brush.Color := TransparentClr;
-    bmp.Canvas.FillRect(Rect(0, 0, w, h));
-    bmp.canvas.Draw(left + Margin - l, top + Margin - t, fPic);
-    bmp.canvas.Draw(DrawObj.left - l, DrawObj.top - t, DrawObj.Bitmap);
+    //bmp.Width := w;
+    //bmp.Height := h;
+    //bmp.Canvas.Brush.Color := TransparentClr;
+    bmp.CanvasBGRA.FillRect(Rect(0, 0, w, h));
+    bmp.canvasBGRA.Draw(left + Margin - l, top + Margin - t, fPic);
+    bmp.canvasBgra.Draw(DrawObj.left - l, DrawObj.top - t, DrawObj.Bitmap);
     fPic.Assign(bmp);
     DataStream.Size := 0;
-    fPic.SaveToStream(DataStream);
+    fPic.SaveToStreamAsPng(DataStream);
     SetBounds(l - Margin, t - Margin, w + Margin * 2, h + Margin * 2);
     BtnPoints[1].X := Width - Margin;
     BtnPoints[1].Y := Height - Margin;
@@ -2884,7 +2882,7 @@ end;
 procedure TplDrawPicture.Rotate(degrees: integer);
 var
   mp: TPoint;
-  TmpPic: TBitmap;
+  TmpPic: TbgraBitmap;
 begin
   if not SavedInfo.isTransforming then
     raise Exception.Create('Error: Rotate() without BeginTransform().');
@@ -2896,9 +2894,9 @@ begin
     exit;
 
   DataStream.Position := 0;
-  TmpPic := TBitmap.Create;
+  TmpPic := TBGRABitmap.Create;
   try
-    TmpPic.Transparent := fPic.Transparent;
+    //TmpPic.Transparent := fPic.Transparent;
     TmpPic.LoadFromStream(DataStream);
     RotateBitmap(TmpPic, fPic, (360 - degrees) * pi / 180,
       Point(TmpPic.Width div 2, TmpPic.Height div 2), mp);
