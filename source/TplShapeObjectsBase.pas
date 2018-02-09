@@ -1091,20 +1091,16 @@ begin
 end;
 
 procedure TplDrawObject.PrepareBitmap;
-var
-  pom:TBGRABitmap;
+
 begin
   { DONE -oTC -cLazarus_Port_Step2 : Bitmap needs a transparent color identical to the color of the owner. }
   //fBitmap.canvas.brush.Color := fBitmap.TransparentColor and $FFFFFF;
-  fBitmap.canvas.brush.Color := fBitmap.TransparentColor;
-  fBitmap.canvas.FillRect(ClientRect);
-  pom:=TBGRABitmap.Create(fBitmap,true);
-  inherited Bitmap.Assign(pom);
-  pom.Destroy;
-  Draw(inherited Bitmap.CanvasBGRA,0,0);
+  //fBitmap.canvas.brush.Color := fBitmap.TransparentColor;
+  //fBitmap.canvas.FillRect(ClientRect);
+  fBitmap.ApplyGlobalOpacity(0);
+  Draw(fBitmap.CanvasBGRA,0,0);
   invalidate;
   fUpdateNeeded := False;
-  inherited Bitmap.Draw(fbitmap.canvas,0,0,False);
 end;
 
 procedure TplDrawObject.SetPen(Value: TPenEx);
