@@ -3780,9 +3780,7 @@ begin
         Bottom := Right;
         left := self.Left + mp.X - (radius + Margin);
         Top := self.Top + mp.Y - (radius + Margin);
-
-        Bitmap.Width := Right;
-        Bitmap.Height := Bottom;
+        Bitmap.SetSize(right,Bottom);
         BlockResize := True; //blocks scaling while resizing Bitmap
         try
           self.setBounds(Left, Top, Right, Bottom);
