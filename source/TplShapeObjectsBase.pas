@@ -320,7 +320,7 @@ var
 // Miscellaneous functions
 
 
-function ClickPosNearPaintedObject(bmp: TBitmap; X, Y, dist: integer): boolean;
+function ClickPosNearPaintedObject(bmp: TbgraBitmap; X, Y, dist: integer): boolean;
 var
   i, j: integer;
   clr: TColor;
@@ -329,14 +329,13 @@ begin
   Result := True;
   with bmp do
   begin
-    clr := (TransparentColor and $FFFFFF);
-    if canvas.Pixels[X, Y] <> clr then
+    if  ScanAtInteger(X, Y).alpha = 255 then
       exit;
     if dist > 0 then
     begin
       for i := max(0, X - dist) to min(X + dist, Width - 1) do
         for j := max(0, Y - dist) to min(Y + dist, Height - 1) do
-          if canvas.Pixels[i, j] <> clr then
+          if ScanAtInteger(i,j).alpha = 255 then
             exit;
     end;
   end;
