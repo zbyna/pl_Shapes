@@ -884,7 +884,6 @@ end;
 procedure TplDrawObject.Paint;
 var
   i: integer;
-  pom:TBGRABitmap; // by zbyna
 begin
 
   if fResizeNeeded then
@@ -892,16 +891,14 @@ begin
   if fUpdateNeeded then
     PrepareBitmap;
 
-  pom:=TBGRABitmap.Create(fBitmap,True); // by zbyna
-  inherited Bitmap.Assign(pom);
-  pom.Destroy; // by zbyna
+    inherited Bitmap.Assign(fBitmap);
 
   if (Focused or (csDesigning in ComponentState)) then
     with inherited Bitmap.CanvasBGRA  do
       begin
         //draw control lines ...
         Pen.Color := FOCUSED_DESIGN_COLOR;
-        Pen.Width := 2;
+        Pen.Width := 1;
         Pen.Style := psDot;
         Brush.Style := bsClear;
         Rectangle(ClientRect);
