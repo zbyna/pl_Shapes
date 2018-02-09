@@ -1140,8 +1140,7 @@ begin
   InternalSetCount(1);
   Pen.Width := 3;
   margX2 := Margin * 2;
-  Bitmap.Width := margX2;
-  Bitmap.Height := margX2;
+  Bitmap.SetSize(margX2,margX2);
   SetBounds(0, 0, margX2, margX2);
   DoSaveInfo;
 end;
