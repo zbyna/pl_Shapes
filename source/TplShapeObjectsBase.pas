@@ -1164,13 +1164,14 @@ procedure TplDrawObject.CalcMargin;
 var
   pwDiv2: integer;
 begin
+
   //may need to override this method (eg if line arrowheads are made sizable)
   if odd(pen.Width) then
     pwDiv2 := (pen.Width div 2) + 1
   else
     pwDiv2 := (pen.Width div 2);
   //make sure there's at least 2 pxls outside buttons for designer size btns...
-  fmargin := max(fBtnSize + 2, pwDiv2 + max(2, abs(fShadowSize)));
+  fmargin := max(fBtnSize + fmarginForDimensions, pwDiv2 + max(2, abs(fShadowSize)));
   ResizeNeeded;
 end;
 

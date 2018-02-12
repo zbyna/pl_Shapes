@@ -1163,7 +1163,7 @@ end;
 procedure TplSolidPoint.CalcMargin;
 begin
   //the following formula is empirical ...
-  Margin := max(ButtonSize + 2, (pen.Width * 3) div 2 + max(2, abs(ShadowSize)));
+  Margin := max(ButtonSize + marginForDimensions, (pen.Width * 3) div 2 + max(2, abs(ShadowSize)));
   //the following is also needed (see ancestor method) ...
   ResizeNeeded;
 end;
@@ -2119,7 +2119,7 @@ end;
 procedure TplTextBezier.CalcMargin;
 begin
   //the following formula is empirical ...
-  Margin := max(ButtonSize + 2, 2 * abs(Font.Height) div 3);
+  Margin := max(ButtonSize + marginForDimensions, 2 * abs(Font.Height) div 3);
   //the following is also needed (see ancestor method) ...
   ResizeNeeded;
 end;
@@ -2596,17 +2596,17 @@ begin
     pomPic.Destroy;
 
     if not fStretch then
-    begin
-      if not BlockResize then //ie: BlockResize when loading from *.dob file
       begin
-        BtnPoints[1].X := BtnPoints[0].X + fPic.Width;
-        BtnPoints[1].Y := BtnPoints[0].Y + fPic.Height;
-        BlockResize := True;
-        SetBounds(left, top, BtnPoints[1].X + Margin, BtnPoints[1].Y + Margin);
-        BlockResize := False;
+        if not BlockResize then //ie: BlockResize when loading from *.dob file
+        begin
+          BtnPoints[1].X := BtnPoints[0].X + fPic.Width;
+          BtnPoints[1].Y := BtnPoints[0].Y + fPic.Height;
+          BlockResize := True;
+          SetBounds(left, top, BtnPoints[1].X + Margin, BtnPoints[1].Y + Margin);
+          BlockResize := False;
+        end;
+        Bitmap.SetSize(Width,Height);
       end;
-      Bitmap.SetSize(Width,Height);
-    end;
   except
     DataStream.Size := 0;
   end;
