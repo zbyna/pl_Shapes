@@ -2596,17 +2596,17 @@ begin
     pomPic.Destroy;
 
     if not fStretch then
-    begin
-      if not BlockResize then //ie: BlockResize when loading from *.dob file
       begin
-        BtnPoints[1].X := BtnPoints[0].X + fPic.Width;
-        BtnPoints[1].Y := BtnPoints[0].Y + fPic.Height;
-        BlockResize := True;
-        SetBounds(left, top, BtnPoints[1].X + Margin, BtnPoints[1].Y + Margin);
-        BlockResize := False;
+        if not BlockResize then //ie: BlockResize when loading from *.dob file
+        begin
+          BtnPoints[1].X := BtnPoints[0].X + fPic.Width;
+          BtnPoints[1].Y := BtnPoints[0].Y + fPic.Height;
+          BlockResize := True;
+          SetBounds(left, top, BtnPoints[1].X + Margin, BtnPoints[1].Y + Margin);
+          BlockResize := False;
+        end;
+        Bitmap.SetSize(Width,Height);
       end;
-      Bitmap.SetSize(Width,Height);
-    end;
   except
     DataStream.Size := 0;
   end;
@@ -2696,7 +2696,7 @@ begin
     //    mask.Free;
     //  end;
     //end;
-    DestCanvas.Draw(0,0,Bitmap);
+    DestCanvas.Draw(DestRect.Top ,DestRect.Left,Bitmap);
   end
   else
     PrintBitmapROP(DestCanvas, DestRect, Bitmap, SRCCOPY);
@@ -2705,9 +2705,9 @@ end;
 procedure TplDrawPicture.DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean);
 var
   tmpRect: TRect;
+  pom:TBGRABitmap;
 begin
-  if IsShadow then
-    exit;
+  if IsShadow then exit;
   tmpRect := Rect(BtnPoints[0].X, BtnPoints[0].Y, BtnPoints[1].X, BtnPoints[1].Y);
 
   //nb: Delphi's Canvas.Draw() & Canvas.StretchDraw() are buggy. The pallete is
@@ -2719,7 +2719,12 @@ begin
   //Anyhow, this PrintBitmap() function seems to (mostly) solve these issues
   //while bearing in mind that some printers (eg PostScript printers) do not
   //support ROPs that involve the destination canvas.
-  PrintBitmap(aCanvas, tmpRect, fPic);
+
+  pom:=TBGRABitmap.Create;
+  BGRAReplace(pom, fpic.Resample(tmpRect.Width,tmpRect.Height,rmSimpleStretch));
+  if Transparent  then  pom.ApplyGlobalOpacity(128);
+  PrintBitmap(aCanvas, tmpRect, pom);
+  pom.Destroy;
 end;
 
 procedure TplDrawPicture.SetStretch(Stretch: boolean);
@@ -2734,7 +2739,9 @@ begin
     ResizeNeeded;
   end
   else
-    UpdateNeeded;
+   begin
+     UpdateNeeded;
+   end;
 end;
 
 procedure TplDrawPicture.SetTransparent(Transparent: boolean);
