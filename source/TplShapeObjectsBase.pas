@@ -65,9 +65,13 @@ type
   TCMDesignHitTest = TLMMouse;
 
 
+  { TplDrawObject }
+
   TplDrawObject = class(TbgraGraphicControl)                // TGraphicControl
   private
     fBitmap: TBGRABitmap;
+    FEnableDrawDimensions: Boolean;
+    fmarginForDimensions : Integer;
     fPen: TPenEx;
     fPropStrings: TStrings;
     fBtnCount: integer;
@@ -88,6 +92,7 @@ type
     fStreamID: string;
     fDataStream: TMemoryStream;
     fFocusChangedEvent: TNotifyEvent;
+    procedure SetEnableDrawDimensions(AValue: Boolean);
     procedure WriteBtnData(S: TStream);
     procedure WriteData(S: TStream);
     procedure ReadBtnData(S: TStream);
@@ -161,8 +166,10 @@ type
     property Bitmap: TbgraBitmap read GetBitmap;
     property CanMove: boolean read GetCanMove;
     property Margin: integer read fMargin write fMargin;
+    property marginForDimensions : integer read fmarginForDimensions write fmarginForDimensions;
     property Moving: boolean read fMoving;
   published
+    property EnableDrawDimensions :Boolean read FEnableDrawDimensions write SetEnableDrawDimensions;
     property ButtonSize: integer read fBtnSize write SetBtnSize;
     property Color read GetColor write SetColor;
     property ColorShadow: TColor read fColorShadow write SetColorShadow;
@@ -737,6 +744,10 @@ begin
   inherited Color := clWhite;
 
   SetBounds(0, 0, 100, 100);
+  if  FEnableDrawDimensions then
+      fmarginForDimensions:=20
+  else
+      fmarginForDimensions:=2;
   CalcMargin; //4-dec-2005 moved up 3 lines
   BtnPoints[0] := Point(fMargin, fMargin);
   BtnPoints[1] := Point(Width - fMargin, Height - fMargin);
@@ -779,6 +790,24 @@ var
 begin
   for i := 0 to fBtnCount - 1 do
     S.Write(BtnPoints[i], SizeOf(TPoint));
+end;
+
+procedure TplDrawObject.SetEnableDrawDimensions(AValue: Boolean);
+begin
+  if FEnableDrawDimensions=AValue then Exit;
+  FEnableDrawDimensions:=AValue;
+  if FEnableDrawDimensions then
+     begin
+       fmarginForDimensions:=20;
+       CalcMargin;
+       ResizeNeeded;
+     end
+  else
+     begin
+       fmarginForDimensions:=2;
+       CalcMargin;
+       ResizeNeeded;
+     end;
 end;
 
 procedure TplDrawObject.WriteData(S: TStream);
