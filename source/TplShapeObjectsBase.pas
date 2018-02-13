@@ -9,7 +9,8 @@ interface
 
 uses
   SysUtils, Classes, LMessages, Controls, Graphics, Math,
-  Forms, TypInfo, ZLib,BGRABitmap,BGRACanvas,BGRAGraphicControl,BGRABitmapTypes;
+  Forms, TypInfo, ZLib,BGRABitmap,BGRACanvas,BGRAGraphicControl,BGRABitmapTypes,
+  Dialogs;
 
 const
 
@@ -1141,6 +1142,7 @@ begin
   //targetCanvas.Rectangle(pomRect);
 
 end;
+
 procedure TplDrawObject.PrepareBitmap;
 
 begin
@@ -1187,7 +1189,6 @@ procedure TplDrawObject.CalcMargin;
 var
   pwDiv2: integer;
 begin
-
   //may need to override this method (eg if line arrowheads are made sizable)
   if odd(pen.Width) then
     pwDiv2 := (pen.Width div 2) + 1
