@@ -18,6 +18,8 @@ const
   MAX_SHADOW_SIZE = 50;
   FOCUSED_DESIGN_COLOR = clRed;
   FOCUSED_DESIGN_COLOR2 = clGreen;
+  MARGIN_FOR_DIMENSIONS = 20;
+
 
   PI_Div4 = pi / 4;
   PI_Div2 = pi / 2;
@@ -744,10 +746,7 @@ begin
   inherited Color := clWhite;
 
   SetBounds(0, 0, 100, 100);
-  if  FEnableDrawDimensions then
-      fmarginForDimensions:=20
-  else
-      fmarginForDimensions:=2;
+  fmarginForDimensions := Margin_FOR_DIMENSIONS;
   CalcMargin; //4-dec-2005 moved up 3 lines
   BtnPoints[0] := Point(fMargin, fMargin);
   BtnPoints[1] := Point(Width - fMargin, Height - fMargin);
@@ -798,15 +797,17 @@ begin
   FEnableDrawDimensions:=AValue;
   if FEnableDrawDimensions then
      begin
-       fmarginForDimensions:=20;
-       CalcMargin;
-       ResizeNeeded;
+       //It is needed to solve properly, as workaround
+       // direct fmarginForDimesions := Margin_FOR_DIMENSIONS in constructor
+       fmarginForDimensions:=MARGIN_FOR_DIMENSIONS;
+       //CalcMargin;
+       //Paint;
      end
   else
      begin
        fmarginForDimensions:=2;
-       CalcMargin;
-       ResizeNeeded;
+       //CalcMargin;
+       //ResizeNeeded;
      end;
 end;
 
