@@ -154,6 +154,7 @@ type
     destructor Destroy; override;
     procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); virtual;
     procedure Draw(targetCanvas: TbgraCanvas; offsetX, offsetY: integer);
+    procedure DrawOwnDimensions(targetCanvas:TBgraCanvas); virtuaL;
     function Clone: TplDrawObject;
     function BtnIdxFromPt(pt: TPoint; ignoreDisabled: boolean; out BtnIdx: integer): boolean;
     function ObjectMidPoint: TPoint;
@@ -922,6 +923,7 @@ begin
 
     inherited Bitmap.Assign(fBitmap);
 
+  if EnableDrawDimensions then DrawOwnDimensions(Bitmap.CanvasBGRA);
   if (Focused or (csDesigning in ComponentState)) then
     with inherited Bitmap.CanvasBGRA  do
       begin
@@ -1119,6 +1121,26 @@ begin
   end;
 end;
 
+procedure TplDrawObject.DrawOwnDimensions(targetCanvas: TBgraCanvas);
+// for rectangle should be here,
+// other shapes, for example circle, should override this
+var
+   pomRect : TRect;
+begin
+  pomRect:=TRect.Create(clientRect);
+  InflateRect(pomRect,-marginForDimensions,-marginForDimensions);
+  targetCanvas.Pen.Width:=1;
+  targetCanvas.MoveTo(pomRect.TopLeft);
+  targetCanvas.LineTo(pomRect.Left,pomRect.top - marginForDimensions);
+  targetCanvas.MoveTo(pomRect.Right,pomRect.Top);
+  targetCanvas.lineTo(pomRect.Right,pomRect.top - marginForDimensions);
+  targetCanvas.MoveTo(pomRect.Left,pomRect.top - marginForDimensions div 2);
+  targetCanvas.LineTo(pomRect.Right,pomRect.top - marginForDimensions div 2);
+
+  //targetCanvas.brush.Style:=bsClear;
+  //targetCanvas.Rectangle(pomRect);
+
+end;
 procedure TplDrawObject.PrepareBitmap;
 
 begin
