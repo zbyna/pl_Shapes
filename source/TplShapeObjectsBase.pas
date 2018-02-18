@@ -160,6 +160,7 @@ type
     procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); virtual;
     procedure Draw(targetCanvas: TbgraCanvas; offsetX, offsetY: integer);
     procedure DrawOwnDimensions(targetCanvas:TBgraCanvas); virtuaL;
+    procedure drawExternalDimensions(targetCanvas:TbgraCanvas); virtual;
     procedure drawLineWithDimension(targetCanvas: TBGRACanvas;b1,b2:TPoint;kam,
                                                   markerThickness: integer;
                                                   enableMarginForDimensions:Boolean);
@@ -1249,6 +1250,60 @@ begin
   //targetCanvas.Rectangle(pomRect);
 end;
 
+procedure TplDrawObject.drawExternalDimensions(targetCanvas: TbgraCanvas);
+var
+   p1,p2,p3,p4 : Tpoint;
+   b1,b2,b3,b4 : Tpoint;
+   insideCenter,selfCenter,deltaCenters:TPoint;
+begin
+  targetCanvas.pen.Width := 1;
+  targetcanvas.Pen.Style := psSolid;
+  insideCenter:= insideObject.ClientToScreen(insideObject.ClientRect.CenterPoint);
+  selfCenter:=self.ClientToScreen(self.ClientRect.CenterPoint);
+  deltaCenters:=selfCenter - insideCenter;
+  if deltaCenters.x > 0 then
+     begin
+       // ----- binding to the left border of self -----
+      // middle point of insideObject transformed to client coordinates
+      // through screen coordinates, adjusted for fmarginForDimensions
+      // to reach shape edge (not client rect)
+      p1:=  ScreenToClient(insideObject.ClientToScreen(
+               insideObject.ClientRect.CenterPoint + Tpoint.create(
+               - (insideObject.Width - 2*fmarginForDimensions) div 2 ,0)));
+      // point on left border of self
+      b1:=TPoint.create(self.ClientRect.Left + fmarginForDimensions,p1.y);
+      insideObject.drawLineWithDimension(targetCanvas,p1,b1,1,10,False);
+     end
+  else
+      begin
+        // binding to the right border of self
+        p4:=  ScreenToClient(insideObject.ClientToScreen(
+                   insideObject.ClientRect.CenterPoint + Tpoint.create(
+                   + (insideObject.Width - 2*fmarginForDimensions) div 2 ,0)));
+        // point on right border of self
+        b4:=TPoint.create(self.ClientRect.Right - fmarginForDimensions,p4.y);
+        insideObject.drawLineWithDimension(targetCanvas,p4,b4,1,10,False);
+      end ;
+ if deltaCenters.y > 0 then
+    begin
+      // ----- binding to the top border of self -----
+      p2 := ScreenToClient(insideObject.ClientToScreen(
+               insideObject.ClientRect.CenterPoint + Tpoint.create(0,
+               - (insideObject.Height - 2*fmarginForDimensions) div 2)));
+      // point on top border of self
+      b2:= TPoint.create(p2.x,self.ClientRect.Top + fmarginForDimensions);
+      insideObject.drawLineWithDimension(targetCanvas,p2,b2 ,1,10,False);
+    end
+ else
+    begin
+      // ----- binding to the bottom border of self -----
+        p3:= ScreenToClient(insideObject.ClientToScreen(
+                 insideObject.ClientRect.CenterPoint + Tpoint.create(0,
+                 + (insideObject.Height - 2*fmarginForDimensions) div 2)));
+        // point on bottom border of self
+        b3:= TPoint.create(p3.x, self.ClientRect.bottom - fmarginForDimensions);
+        insideObject.drawLineWithDimension(targetCanvas,p3,b3 ,1,10,False);
+    end
 end;
 
 procedure TplDrawObject.PrepareBitmap;
