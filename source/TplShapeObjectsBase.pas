@@ -160,6 +160,9 @@ type
     procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); virtual;
     procedure Draw(targetCanvas: TbgraCanvas; offsetX, offsetY: integer);
     procedure DrawOwnDimensions(targetCanvas:TBgraCanvas); virtuaL;
+    procedure drawLineWithDimension(targetCanvas: TBGRACanvas;b1,b2:TPoint;kam,
+                                                  markerThickness: integer;
+                                                  enableMarginForDimensions:Boolean);
     function Clone: TplDrawObject;
     function BtnIdxFromPt(pt: TPoint; ignoreDisabled: boolean; out BtnIdx: integer): boolean;
     function ObjectMidPoint: TPoint;
@@ -1149,6 +1152,57 @@ begin
       OffsetBtns(-offsetX, -offsetY);
     end;
   end;
+end;
+
+procedure TplDrawObject.drawLineWithDimension(targetCanvas: TBGRACanvas;
+                                              b1,b2:TPoint;
+                                              kam,markerThickness:integer;
+                                              enableMarginForDimensions:Boolean);
+var
+  pomS:Integer;
+  rectForText : TRect;
+begin
+  if enableMarginForDimensions then
+     pomS:= kam*marginForDimensions
+  else
+     pomS:=kam;
+  if b1.y = b2.y then
+    begin
+      targetCanvas.MoveTo(b1.x,b1.y + kam*markerThickness);
+      targetCanvas.LineTo(b1.x,b1.y + pomS - kam*markerThickness );
+      targetCanvas.MoveTo(b2.x,b2.y + kam*markerThickness );
+      targetCanvas.lineTo(b2.x,b2.y + pomS - kam*markerThickness );
+      targetCanvas.MoveTo(b1.x,b1.y + pomS div 2);
+      targetCanvas.LineTo(b2.x,b2.y + pomS div 2);
+      rectForText:=Trect.Create(b1.x,b1.y + pomS div 2,b2.x,b2.y + pomS - kam*markerThickness);
+      if kam < 0 then
+              targetCanvas.TextRect(rectForText,rectForText.Left +2*markerThickness,rectForText.Bottom,
+                                       inttostr(width),targetCanvas.TextStyle)
+             else
+               targetCanvas.TextRect(rectForText,rectForText.Left + 2*markerThickness,rectForText.top,
+                                       inttostr(width),targetCanvas.TextStyle)
+
+
+    end
+                 else
+    begin
+      targetCanvas.MoveTo(b1.x + kam*markerThickness ,b1.y);
+      targetCanvas.LineTo(b1.x + pomS - kam*markerThickness ,b1.y );
+      targetCanvas.MoveTo(b2.x + kam*markerThickness ,b2.y);
+      targetCanvas.lineTo(b2.x + pomS - kam*markerThickness ,b2.y );
+      targetCanvas.MoveTo(b1.x + pomS div 2,b1.y );
+      targetCanvas.LineTo(b2.x + pomS div 2,b2.y );
+      rectForText:=Trect.Create(b1.x + pomS div 2,b1.y,b2.x + pomS - kam*markerThickness,b2.y);
+      //targetCanvas.Rectangle(rectForText);
+      if kam < 0 then
+         targetCanvas.TextRect(rectForText,rectForText.left - 2*markerThickness,
+                                           rectForText.top + Height div 4,
+                               inttostr(Height),targetCanvas.TextStyle)
+                 else
+         targetCanvas.TextRect(rectForText,rectForText.left,
+                                           rectForText.top + Height div 4 ,
+                               inttostr(Height),targetCanvas.TextStyle)
+    end;
 end;
 
 procedure TplDrawObject.DrawOwnDimensions(targetCanvas: TBgraCanvas);
