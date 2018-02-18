@@ -955,9 +955,10 @@ begin
   if fUpdateNeeded then
     PrepareBitmap;
 
-    inherited Bitmap.Assign(fBitmap);
+  inherited Bitmap.Assign(fBitmap);
 
-  if EnableDrawDimensions then DrawOwnDimensions(Bitmap.CanvasBGRA);
+  if EnableDrawDimensions then DrawOwnDimensions(inherited Bitmap.CanvasBGRA);
+  if Assigned(insideObject) then drawExternalDimensions(inherited Bitmap.CanvasBGRA);
   if (Focused or (csDesigning in ComponentState)) then
     with inherited Bitmap.CanvasBGRA  do
       begin
