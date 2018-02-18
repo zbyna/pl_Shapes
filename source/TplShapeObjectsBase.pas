@@ -19,7 +19,7 @@ const
   MAX_SHADOW_SIZE = 50;
   FOCUSED_DESIGN_COLOR = clRed;
   FOCUSED_DESIGN_COLOR2 = clGreen;
-  MARGIN_FOR_DIMENSIONS = 20;
+  MARGIN_FOR_DIMENSIONS = 45;
 
 
   PI_Div4 = pi / 4;
@@ -748,7 +748,8 @@ begin
   inherited Color := clWhite;
 
   SetBounds(0, 0, 100, 100);
-  fmarginForDimensions := Margin_FOR_DIMENSIONS;
+  //fmarginForDimensions := MARGIN_FOR_DIMENSIONS;
+  fmarginForDimensions:=2;
   CalcMargin; //4-dec-2005 moved up 3 lines
   BtnPoints[0] := Point(fMargin, fMargin);
   BtnPoints[1] := Point(Width - fMargin, Height - fMargin);
@@ -799,18 +800,21 @@ begin
   FEnableDrawDimensions:=AValue;
   if FEnableDrawDimensions then
      begin
-       //It is needed to solve properly, as workaround
-       // direct fmarginForDimesions := Margin_FOR_DIMENSIONS in constructor
+     //  It is needed to solve properly, as workaround
+     //  direct fmarginForDimesions := Margin_FOR_DIMENSIONS in constructor
        fmarginForDimensions:=MARGIN_FOR_DIMENSIONS;
-       //CalcMargin;
-       //Paint;
+       CalcMargin;
+       fUpdateNeeded:=True;
+       self.Loaded;
      end
   else
      begin
        fmarginForDimensions:=2;
-       //CalcMargin;
-       //ResizeNeeded;
-     end;
+       CalcMargin;
+       ResizeNeeded;
+       fUpdateNeeded:=True;
+       self.Loaded;
+end;
 end;
 
 procedure TplDrawObject.WriteData(S: TStream);
@@ -948,7 +952,7 @@ procedure TplDrawObject.Loaded;
 begin
   inherited;
   fBitmap.SetSize(width,Height);
-  fResizeNeeded := False;
+  fResizeNeeded := True;          // by zbyna
   DoSaveInfo;
 end;
 
@@ -1150,9 +1154,10 @@ begin
   //fBitmap.canvas.brush.Color := fBitmap.TransparentColor and $FFFFFF;
   //fBitmap.canvas.brush.Color := fBitmap.TransparentColor;
   //fBitmap.canvas.FillRect(ClientRect);
+
   fBitmap.ApplyGlobalOpacity(0);
   Draw(fBitmap.CanvasBGRA,0,0);
-  invalidate;
+  //invalidate;
   fUpdateNeeded := False;
 end;
 
