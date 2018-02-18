@@ -75,6 +75,8 @@ type
     fBitmap: TBGRABitmap;
     FEnableDrawDimensions: Boolean;
     fmarginForDimensions : Integer;
+    finsideObject: TplDrawObject;
+    FoutsideObject: TplDrawObject;
     fPen: TPenEx;
     fPropStrings: TStrings;
     fBtnCount: integer;
@@ -96,6 +98,8 @@ type
     fDataStream: TMemoryStream;
     fFocusChangedEvent: TNotifyEvent;
     procedure SetEnableDrawDimensions(AValue: Boolean);
+    procedure SetinsideObject(AValue: TplDrawObject);
+    procedure SetoutsideObject(AValue: TplDrawObject);
     procedure WriteBtnData(S: TStream);
     procedure WriteData(S: TStream);
     procedure ReadBtnData(S: TStream);
@@ -173,6 +177,8 @@ type
     property marginForDimensions : integer read fmarginForDimensions write fmarginForDimensions;
     property Moving: boolean read fMoving;
   published
+    property insideObject : TplDrawObject read FinsideObject write SetinsideObject;
+    property outsideObject : TplDrawObject read FoutsideObject write SetoutsideObject;
     property EnableDrawDimensions :Boolean read FEnableDrawDimensions write SetEnableDrawDimensions;
     property ButtonSize: integer read fBtnSize write SetBtnSize;
     property Color read GetColor write SetColor;
@@ -754,6 +760,8 @@ begin
   BtnPoints[0] := Point(fMargin, fMargin);
   BtnPoints[1] := Point(Width - fMargin, Height - fMargin);
   fUpdateNeeded := True;
+  finsideObject:=nil;
+  FoutsideObject:=nil;
 end;
 
 destructor TplDrawObject.Destroy;
@@ -761,6 +769,11 @@ begin
   fBitmap.Free;
   fPen.Free;
   fPropStrings.Free;
+  // it is needed to cancel relation to the outside object
+  if outsideObject <> nil then
+     outsideObject.insideObject:=nil;
+  finsideObject:=nil;
+  FoutsideObject:=nil;
   inherited;
 end;
 
@@ -814,7 +827,19 @@ begin
        ResizeNeeded;
        fUpdateNeeded:=True;
        self.Loaded;
+     end;
 end;
+
+procedure TplDrawObject.SetinsideObject(AValue: TplDrawObject);
+begin
+  if finsideObject=AValue then Exit;
+  finsideObject:=AValue;
+end;
+
+procedure TplDrawObject.SetoutsideObject(AValue: TplDrawObject);
+begin
+  if FoutsideObject=AValue then Exit;
+  FoutsideObject:=AValue;
 end;
 
 procedure TplDrawObject.WriteData(S: TStream);
