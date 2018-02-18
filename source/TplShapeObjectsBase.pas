@@ -1210,19 +1210,44 @@ procedure TplDrawObject.DrawOwnDimensions(targetCanvas: TBgraCanvas);
 // other shapes, for example circle, should override this
 var
    pomRect : TRect;
+   outsideCenter,selfCenter,deltaCenters:TPoint;
+
 begin
   pomRect:=TRect.Create(clientRect);
   InflateRect(pomRect,-marginForDimensions,-marginForDimensions);
   targetCanvas.Pen.Width:=1;
-  targetCanvas.MoveTo(pomRect.TopLeft);
-  targetCanvas.LineTo(pomRect.Left,pomRect.top - marginForDimensions);
-  targetCanvas.MoveTo(pomRect.Right,pomRect.Top);
-  targetCanvas.lineTo(pomRect.Right,pomRect.top - marginForDimensions);
-  targetCanvas.MoveTo(pomRect.Left,pomRect.top - marginForDimensions div 2);
-  targetCanvas.LineTo(pomRect.Right,pomRect.top - marginForDimensions div 2);
-
+  if outsideObject <> nil then
+    begin
+      outsideCenter:= outsideObject.ClientToScreen(outsideObject.ClientRect.CenterPoint);
+      selfCenter:=self.ClientToScreen(self.ClientRect.CenterPoint);
+      deltaCenters:=selfCenter - outsideCenter;
+      if deltaCenters.x > 0 then
+         drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+                            TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True)
+      else
+         drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
+                            TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+      if deltaCenters.y > 0 then
+         drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+                            TPoint.Create(pomRect.Right,pomRect.top),-1,10,True)
+      else
+         drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
+                            TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+    end
+  else
+    begin
+      drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+                            TPoint.Create(pomRect.Right,pomRect.top),-1,10,True);
+      drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+                            TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True);
+      //drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
+      //                      TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+      //drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
+                            //TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+    end;
   //targetCanvas.brush.Style:=bsClear;
   //targetCanvas.Rectangle(pomRect);
+end;
 
 end;
 
