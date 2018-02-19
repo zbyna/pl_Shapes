@@ -19,7 +19,7 @@ const
   MAX_SHADOW_SIZE = 50;
   FOCUSED_DESIGN_COLOR = clRed;
   FOCUSED_DESIGN_COLOR2 = clGreen;
-  MARGIN_FOR_DIMENSIONS = 45;
+  MARGIN_FOR_DIMENSIONS = 50;
 
 
   PI_Div4 = pi / 4;
@@ -162,7 +162,7 @@ type
     procedure DrawOwnDimensions(targetCanvas:TBgraCanvas); virtuaL;
     procedure drawExternalDimensions(targetCanvas:TbgraCanvas); virtual;
     procedure drawLineWithDimension(targetCanvas: TBGRACanvas;b1,b2:TPoint;kam,
-                                                  markerThickness: integer;
+                                                  markerDistance: integer;
                                                   enableMarginForDimensions:Boolean);
     function Clone: TplDrawObject;
     function BtnIdxFromPt(pt: TPoint; ignoreDisabled: boolean; out BtnIdx: integer): boolean;
@@ -1158,52 +1158,61 @@ end;
 
 procedure TplDrawObject.drawLineWithDimension(targetCanvas: TBGRACanvas;
                                               b1,b2:TPoint;
-                                              kam,markerThickness:integer;
+                                              kam,markerDistance:integer;
                                               enableMarginForDimensions:Boolean);
+// markerDistance -  distance from upper and bottom border within
+// marginForDimensions area
 var
   pomS:Integer;
   rectForText : TRect;
+  distanceB1B2:float;
 begin
+  distanceB1B2:=b1.Distance(b2);
+  targetCanvas.Font.Height:=25;
+  targetCanvas.Brush.Style:=bsClear;
   if enableMarginForDimensions then
      pomS:= kam*marginForDimensions
   else
      pomS:=kam;
   if b1.y = b2.y then
+    //  draw top or bootom dimension
     begin
-      targetCanvas.MoveTo(b1.x,b1.y + kam*markerThickness);
-      targetCanvas.LineTo(b1.x,b1.y + pomS - kam*markerThickness );
-      targetCanvas.MoveTo(b2.x,b2.y + kam*markerThickness );
-      targetCanvas.lineTo(b2.x,b2.y + pomS - kam*markerThickness );
+      targetCanvas.MoveTo(b1.x,b1.y + kam*markerDistance);
+      targetCanvas.LineTo(b1.x,b1.y + pomS - kam*markerDistance );
+      targetCanvas.MoveTo(b2.x,b2.y + kam*markerDistance );
+      targetCanvas.lineTo(b2.x,b2.y + pomS - kam*markerDistance );
       targetCanvas.MoveTo(b1.x,b1.y + pomS div 2);
       targetCanvas.LineTo(b2.x,b2.y + pomS div 2);
-      rectForText:=Trect.Create(b1.x,b1.y + pomS div 2,b2.x,b2.y + pomS - kam*markerThickness);
+      targetCanvas.Font.Orientation:=0;
       if kam < 0 then
-              targetCanvas.TextRect(rectForText,rectForText.Left +2*markerThickness,rectForText.Bottom,
-                                       inttostr(width),targetCanvas.TextStyle)
+              targetCanvas.TextOut(b1.x +round(distanceB1B2) div 2,
+                                    b2.y+pomS,FloatToStr(distanceB1B2))
+
+
              else
-               targetCanvas.TextRect(rectForText,rectForText.Left + 2*markerThickness,rectForText.top,
-                                       inttostr(width),targetCanvas.TextStyle)
+               targetCanvas.TextOut(b1.x + round(distanceB1B2) div 2,
+                                     b2.y + pomS div 2,FloatToStr(distanceB1B2));
 
 
     end
                  else
+    //  draw left or right dimension
     begin
-      targetCanvas.MoveTo(b1.x + kam*markerThickness ,b1.y);
-      targetCanvas.LineTo(b1.x + pomS - kam*markerThickness ,b1.y );
-      targetCanvas.MoveTo(b2.x + kam*markerThickness ,b2.y);
-      targetCanvas.lineTo(b2.x + pomS - kam*markerThickness ,b2.y );
+      targetCanvas.MoveTo(b1.x + kam*markerDistance ,b1.y);
+      targetCanvas.LineTo(b1.x + pomS - kam*markerDistance ,b1.y );
+      targetCanvas.MoveTo(b2.x + kam*markerDistance ,b2.y);
+      targetCanvas.lineTo(b2.x + pomS - kam*markerDistance ,b2.y );
       targetCanvas.MoveTo(b1.x + pomS div 2,b1.y );
       targetCanvas.LineTo(b2.x + pomS div 2,b2.y );
-      rectForText:=Trect.Create(b1.x + pomS div 2,b1.y,b2.x + pomS - kam*markerThickness,b2.y);
-      //targetCanvas.Rectangle(rectForText);
+      targetCanvas.Font.Orientation:=900;
       if kam < 0 then
-         targetCanvas.TextRect(rectForText,rectForText.left - 2*markerThickness,
-                                           rectForText.top + Height div 4,
-                               inttostr(Height),targetCanvas.TextStyle)
+         targetCanvas.TextOut(b1.x + pomS,
+                              b1.y + round(distanceB1B2) div 2,
+                              FloatToStr(distanceB1B2))
                  else
-         targetCanvas.TextRect(rectForText,rectForText.left,
-                                           rectForText.top + Height div 4 ,
-                               inttostr(Height),targetCanvas.TextStyle)
+         targetCanvas.TextOut(b1.x + pomS div 2,
+                              b1.y + round(distanceB1B2) div 2 ,
+                               FloatToStr(distanceB1B2))
     end;
 end;
 
