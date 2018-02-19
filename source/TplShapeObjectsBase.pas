@@ -1282,7 +1282,7 @@ begin
                - (insideObject.Width - 2*fmarginForDimensions) div 2 ,0)));
       // point on left border of self
       b1:=TPoint.create(self.ClientRect.Left + fmarginForDimensions,p1.y);
-      insideObject.drawLineWithDimension(targetCanvas,p1,b1,1,10,False);
+      insideObject.drawLineWithDimension(targetCanvas,b1,p1,1,10,False);
      end
   else
       begin
@@ -1302,7 +1302,7 @@ begin
                - (insideObject.Height - 2*fmarginForDimensions) div 2)));
       // point on top border of self
       b2:= TPoint.create(p2.x,self.ClientRect.Top + fmarginForDimensions);
-      insideObject.drawLineWithDimension(targetCanvas,p2,b2 ,1,10,False);
+      insideObject.drawLineWithDimension(targetCanvas,b2,p2 ,1,10,False);
     end
  else
     begin
