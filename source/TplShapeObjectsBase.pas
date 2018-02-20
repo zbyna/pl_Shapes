@@ -77,6 +77,8 @@ type
 
     fmarginForDimensions : Integer;
     foutsideObject: TplDrawObject;
+    fShowDimensions: array[1..4] of Boolean;
+
     fPen: TPenEx;
     fPropStrings: TStrings;
     fBtnCount: integer;
@@ -97,6 +99,8 @@ type
     fStreamID: string;
     fDataStream: TMemoryStream;
     fFocusChangedEvent: TNotifyEvent;
+    function GetshowDimensions(Index: Integer): Boolean;
+    procedure SetshowDimensions(Index: Integer; AValue: Boolean);
     procedure SetEnableDrawDimensions(AValue: Boolean);
     procedure SetoutsideObject(AValue: TplDrawObject);
     procedure WriteBtnData(S: TStream);
@@ -180,7 +184,12 @@ type
     property Margin: integer read fMargin write fMargin;
     property marginForDimensions : integer read fmarginForDimensions write fmarginForDimensions;
     property Moving: boolean read fMoving;
+    property showDimensions [Index: Integer]: Boolean read GetshowDimensions write SetshowDimensions;
   published
+    property showLeftDimension: Boolean index 1  read GetshowDimensions write SetshowDimensions;
+    property showTopDimension: Boolean index 2  read GetshowDimensions write SetshowDimensions;
+    property showRightDimension: Boolean index 3  read GetshowDimensions write SetshowDimensions;
+    property showBottomDimension: Boolean index 4  read GetshowDimensions write SetshowDimensions;
     property outsideObject : TplDrawObject read FoutsideObject write SetoutsideObject;
     property EnableDrawDimensions :Boolean read FEnableDrawDimensions write SetEnableDrawDimensions;
     property ButtonSize: integer read fBtnSize write SetBtnSize;
@@ -767,6 +776,11 @@ begin
   insideObject:=TComponentList.create(False);
   // component which contain self
   FoutsideObject:=nil;
+  // default dimesions to show
+  fShowDimensions[1]:=True;
+  fShowDimensions[2]:=True;
+  fShowDimensions[3]:=False;
+  fShowDimensions[4]:=False;
 end;
 
 destructor TplDrawObject.Destroy;
@@ -840,7 +854,18 @@ begin
      end;
 end;
 
+function TplDrawObject.GetshowDimensions(Index: Integer): Boolean;
 begin
+  Result:=fShowDimensions[Index];
+end;
+
+procedure TplDrawObject.SetshowDimensions(Index: Integer; AValue: Boolean);
+begin
+  if AValue <> fShowDimensions[Index] then
+     begin
+        fShowDimensions[Index]:=AValue;
+        Loaded;
+     end;
 end;
 
 procedure TplDrawObject.SetoutsideObject(AValue: TplDrawObject);
@@ -1251,14 +1276,18 @@ begin
     end
   else
     begin
-      drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                            TPoint.Create(pomRect.Right,pomRect.top),-1,10,True);
-      drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                            TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True);
-      //drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
-      //                      TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
-      //drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
-                            //TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+      if  showTopDimension then
+          drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+                                TPoint.Create(pomRect.Right,pomRect.top),-1,10,True);
+      if  showLeftDimension then
+          drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+                                TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True);
+      if showRightDimension then
+          drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
+                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+      if showBottomDimension then
+         drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
+                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
     end;
   //targetCanvas.brush.Style:=bsClear;
   //targetCanvas.Rectangle(pomRect);
