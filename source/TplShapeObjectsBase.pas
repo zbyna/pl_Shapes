@@ -10,7 +10,7 @@ interface
 uses
   SysUtils, Classes, LMessages, Controls, Graphics, Math,
   Forms, TypInfo, ZLib,BGRABitmap,BGRACanvas,BGRAGraphicControl,BGRABitmapTypes,
-  Dialogs;
+  Dialogs,contnrs;
 
 const
 
@@ -74,9 +74,9 @@ type
   private
     fBitmap: TBGRABitmap;
     FEnableDrawDimensions: Boolean;
+
     fmarginForDimensions : Integer;
-    finsideObject: TplDrawObject;
-    FoutsideObject: TplDrawObject;
+    foutsideObject: TplDrawObject;
     fPen: TPenEx;
     fPropStrings: TStrings;
     fBtnCount: integer;
@@ -98,7 +98,6 @@ type
     fDataStream: TMemoryStream;
     fFocusChangedEvent: TNotifyEvent;
     procedure SetEnableDrawDimensions(AValue: Boolean);
-    procedure SetinsideObject(AValue: TplDrawObject);
     procedure SetoutsideObject(AValue: TplDrawObject);
     procedure WriteBtnData(S: TStream);
     procedure WriteData(S: TStream);
@@ -154,6 +153,7 @@ type
     property DistinctiveLastBtn: boolean read fDistinctiveLastBtn write fDistinctiveLastBtn;
     property PropStrings: TStrings read fPropStrings;
   public
+    insideObject : TcomponentList;
     BtnPoints: array of TPoint;  // by zbyna
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -181,7 +181,6 @@ type
     property marginForDimensions : integer read fmarginForDimensions write fmarginForDimensions;
     property Moving: boolean read fMoving;
   published
-    property insideObject : TplDrawObject read FinsideObject write SetinsideObject;
     property outsideObject : TplDrawObject read FoutsideObject write SetoutsideObject;
     property EnableDrawDimensions :Boolean read FEnableDrawDimensions write SetEnableDrawDimensions;
     property ButtonSize: integer read fBtnSize write SetBtnSize;
@@ -764,20 +763,27 @@ begin
   BtnPoints[0] := Point(fMargin, fMargin);
   BtnPoints[1] := Point(Width - fMargin, Height - fMargin);
   fUpdateNeeded := True;
-  finsideObject:=nil;
+  // list components inside self
+  insideObject:=TComponentList.create(False);
+  // component which contain self
   FoutsideObject:=nil;
 end;
 
 destructor TplDrawObject.Destroy;
+var
+  i: Integer;
 begin
   fBitmap.Free;
   fPen.Free;
   fPropStrings.Free;
+  // for the 1st :-)  from pov of object which is contained
   // it is needed to cancel relation to the outside object
-  if outsideObject <> nil then
-     outsideObject.insideObject:=nil;
-  finsideObject:=nil;
-  FoutsideObject:=nil;
+  // if self is set to nill then object which reference is stored in
+  // self.insideobject (TComponentList)  automaticaly remove self from it
+  // for the 2nd :-) from pov of object which contains (is container)
+  for i:= 0 to self.insideObject.Count -1 do
+      TplDrawObject(self.insideObject[i]).outsideObject:=nil;
+  self.insideObject.Destroy;
   inherited;
 end;
 
@@ -834,16 +840,14 @@ begin
      end;
 end;
 
-procedure TplDrawObject.SetinsideObject(AValue: TplDrawObject);
 begin
-  if finsideObject=AValue then Exit;
-  finsideObject:=AValue;
 end;
 
 procedure TplDrawObject.SetoutsideObject(AValue: TplDrawObject);
 begin
   if FoutsideObject=AValue then Exit;
   FoutsideObject:=AValue;
+  if aValue <> nil then AValue.insideObject.Add(self)
 end;
 
 procedure TplDrawObject.WriteData(S: TStream);
@@ -1265,55 +1269,61 @@ var
    p1,p2,p3,p4 : Tpoint;
    b1,b2,b3,b4 : Tpoint;
    insideCenter,selfCenter,deltaCenters:TPoint;
+   pomInsideObject:TplDrawObject;
+   i: Integer;
 begin
-  targetCanvas.pen.Width := 1;
-  targetcanvas.Pen.Style := psSolid;
-  insideCenter:= insideObject.ClientToScreen(insideObject.ClientRect.CenterPoint);
-  selfCenter:=self.ClientToScreen(self.ClientRect.CenterPoint);
-  deltaCenters:=selfCenter - insideCenter;
-  if deltaCenters.x > 0 then
-     begin
-       // ----- binding to the left border of self -----
-      // middle point of insideObject transformed to client coordinates
-      // through screen coordinates, adjusted for fmarginForDimensions
-      // to reach shape edge (not client rect)
-      p1:=  ScreenToClient(insideObject.ClientToScreen(
-               insideObject.ClientRect.CenterPoint + Tpoint.create(
-               - (insideObject.Width - 2*fmarginForDimensions) div 2 ,0)));
-      // point on left border of self
-      b1:=TPoint.create(self.ClientRect.Left + fmarginForDimensions,p1.y);
-      insideObject.drawLineWithDimension(targetCanvas,b1,p1,1,10,False);
-     end
-  else
-      begin
-        // binding to the right border of self
-        p4:=  ScreenToClient(insideObject.ClientToScreen(
-                   insideObject.ClientRect.CenterPoint + Tpoint.create(
-                   + (insideObject.Width - 2*fmarginForDimensions) div 2 ,0)));
-        // point on right border of self
-        b4:=TPoint.create(self.ClientRect.Right - fmarginForDimensions,p4.y);
-        insideObject.drawLineWithDimension(targetCanvas,p4,b4,1,10,False);
-      end ;
- if deltaCenters.y > 0 then
+  for i:=0 to insideObject.Count-1 do
     begin
-      // ----- binding to the top border of self -----
-      p2 := ScreenToClient(insideObject.ClientToScreen(
-               insideObject.ClientRect.CenterPoint + Tpoint.create(0,
-               - (insideObject.Height - 2*fmarginForDimensions) div 2)));
-      // point on top border of self
-      b2:= TPoint.create(p2.x,self.ClientRect.Top + fmarginForDimensions);
-      insideObject.drawLineWithDimension(targetCanvas,b2,p2 ,1,10,False);
-    end
- else
-    begin
-      // ----- binding to the bottom border of self -----
-        p3:= ScreenToClient(insideObject.ClientToScreen(
-                 insideObject.ClientRect.CenterPoint + Tpoint.create(0,
-                 + (insideObject.Height - 2*fmarginForDimensions) div 2)));
-        // point on bottom border of self
-        b3:= TPoint.create(p3.x, self.ClientRect.bottom - fmarginForDimensions);
-        insideObject.drawLineWithDimension(targetCanvas,p3,b3 ,1,10,False);
-    end
+      pomInsideObject:=TplDrawObject(insideObject[i]);
+      targetCanvas.pen.Width := 1;
+      targetcanvas.Pen.Style := psSolid;
+      insideCenter:= pomInsideObject.ClientToScreen(pomInsideObject.ClientRect.CenterPoint);
+      selfCenter:=self.ClientToScreen(self.ClientRect.CenterPoint);
+      deltaCenters:=selfCenter - insideCenter;
+      if deltaCenters.x > 0 then
+         begin
+           // ----- binding to the left border of self -----
+          // middle point of pomInsideObject transformed to client coordinates
+          // through screen coordinates, adjusted for fmarginForDimensions
+          // to reach shape edge (not client rect)
+          p1:=  ScreenToClient(pomInsideObject.ClientToScreen(
+                   pomInsideObject.ClientRect.CenterPoint + Tpoint.create(
+                   - (pomInsideObject.Width - 2*fmarginForDimensions) div 2 ,0)));
+          // point on left border of self
+          b1:=TPoint.create(self.ClientRect.Left + fmarginForDimensions,p1.y);
+          pomInsideObject.drawLineWithDimension(targetCanvas,b1,p1,1,10,False);
+         end
+      else
+          begin
+            // binding to the right border of self
+            p4:=  ScreenToClient(pomInsideObject.ClientToScreen(
+                       pomInsideObject.ClientRect.CenterPoint + Tpoint.create(
+                       + (pomInsideObject.Width - 2*fmarginForDimensions) div 2 ,0)));
+            // point on right border of self
+            b4:=TPoint.create(self.ClientRect.Right - fmarginForDimensions,p4.y);
+            pomInsideObject.drawLineWithDimension(targetCanvas,p4,b4,1,10,False);
+          end ;
+     if deltaCenters.y > 0 then
+        begin
+          // ----- binding to the top border of self -----
+          p2 := ScreenToClient(pomInsideObject.ClientToScreen(
+                   pomInsideObject.ClientRect.CenterPoint + Tpoint.create(0,
+                   - (pomInsideObject.Height - 2*fmarginForDimensions) div 2)));
+          // point on top border of self
+          b2:= TPoint.create(p2.x,self.ClientRect.Top + fmarginForDimensions);
+          pomInsideObject.drawLineWithDimension(targetCanvas,b2,p2 ,1,10,False);
+        end
+     else
+        begin
+          // ----- binding to the bottom border of self -----
+            p3:= ScreenToClient(pomInsideObject.ClientToScreen(
+                     pomInsideObject.ClientRect.CenterPoint + Tpoint.create(0,
+                     + (pomInsideObject.Height - 2*fmarginForDimensions) div 2)));
+            // point on bottom border of self
+            b3:= TPoint.create(p3.x, self.ClientRect.bottom - fmarginForDimensions);
+            pomInsideObject.drawLineWithDimension(targetCanvas,p3,b3 ,1,10,False);
+        end
+    end;
 end;
 
 procedure TplDrawObject.PrepareBitmap;
