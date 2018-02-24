@@ -1753,6 +1753,10 @@ begin
   AddToPropStrings('showTopDimension',GetEnumProp(Self,'showTopDimension'));
   AddToPropStrings('showRightDimension',GetEnumProp(Self,'showRightDimension'));
   AddToPropStrings('ShowBottomDimension',GetEnumProp(Self,'ShowBottomDimension'));
+  if assigned(outsideObject) then
+     AddToPropStrings('outsideObject', inttohex(ptrint(outsideObject), 8));
+     {the rest eg. adding referenc to insideObject.TComponentList
+       is done in setOutsideObject()}
   if fStreamID <> '' then
     AddToPropStrings('ObjId', fStreamID);
   if assigned(fDataStream) then
@@ -1928,7 +1932,7 @@ begin
             // by zbyna strtoint() replace by StrToIntDef();
             tkInteger    :SetPropValue(self, propName, StrToIntDef(propVal,0));
             tkLString    :SetPropValue(self, propName, propVal);
-            tkSet: SetSetProp(self, propName, propVal);
+            tkSet        :SetSetProp(self, propName, propVal);
             tkClass:
             begin
               if assigned(ObjPropertyList) and GetObjectPropClass(Self, PropName).InheritsFrom(TplDrawObject) then
