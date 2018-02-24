@@ -77,7 +77,7 @@ type
 
     fmarginForDimensions : Integer;
     foutsideObject: TplDrawObject;
-    fShowDimensions: array[1..4] of Boolean;
+    fShowDimensions: array[1..5] of Boolean;
 
     fPen: TPenEx;
     fPropStrings: TStrings;
@@ -190,6 +190,7 @@ type
     property showTopDimension: Boolean index 2  read GetshowDimensions write SetshowDimensions;
     property showRightDimension: Boolean index 3  read GetshowDimensions write SetshowDimensions;
     property showBottomDimension: Boolean index 4  read GetshowDimensions write SetshowDimensions;
+    property showExternalDimensions: Boolean index 5  read GetshowDimensions write SetshowDimensions;
     property outsideObject : TplDrawObject read FoutsideObject write SetoutsideObject;
     property EnableDrawDimensions :Boolean read FEnableDrawDimensions write SetEnableDrawDimensions;
     property ButtonSize: integer read fBtnSize write SetBtnSize;
@@ -781,6 +782,7 @@ begin
   fShowDimensions[2]:=True;
   fShowDimensions[3]:=False;
   fShowDimensions[4]:=False;
+  fShowDimensions[5]:=True;
   // needed for drag and drop
   DragMode:=dmAutomatic;
   DragKind:=dkDrag;
@@ -1311,6 +1313,7 @@ begin
   for i:=0 to insideObject.Count-1 do
     begin
       pomInsideObject:=TplDrawObject(insideObject[i]);
+      if not pomInsideObject.showExternalDimensions then continue;
       targetCanvas.pen.Width := 1;
       targetcanvas.Pen.Style := psSolid;
       insideCenter:= pomInsideObject.ClientToScreen(pomInsideObject.ClientRect.CenterPoint);
@@ -1753,6 +1756,7 @@ begin
   AddToPropStrings('showTopDimension',GetEnumProp(Self,'showTopDimension'));
   AddToPropStrings('showRightDimension',GetEnumProp(Self,'showRightDimension'));
   AddToPropStrings('ShowBottomDimension',GetEnumProp(Self,'ShowBottomDimension'));
+  AddToPropStrings('showExternalDimensions',GetEnumProp(Self,'showExternalDimensions'));
   if assigned(outsideObject) then
      AddToPropStrings('outsideObject', inttohex(ptrint(outsideObject), 8));
      {the rest eg. adding referenc to insideObject.TComponentList
