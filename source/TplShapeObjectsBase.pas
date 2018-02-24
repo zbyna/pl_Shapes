@@ -1923,10 +1923,11 @@ begin
         else if IsPublishedProp(self, propName) then
         begin
           case PropType(self, propName) of
-            tkEnumeration: SetEnumProp(self, propName, propVal);
+            tkEnumeration:SetEnumProp(self, propName, propVal);
+            tkBool       :SetEnumProp(self, propName, propVal);
             // by zbyna strtoint() replace by StrToIntDef();
-            tkInteger: SetPropValue(self, propName, StrToIntDef(propVal,0));
-            tkLString: SetPropValue(self, propName, propVal);
+            tkInteger    :SetPropValue(self, propName, StrToIntDef(propVal,0));
+            tkLString    :SetPropValue(self, propName, propVal);
             tkSet: SetSetProp(self, propName, propVal);
             tkClass:
             begin
