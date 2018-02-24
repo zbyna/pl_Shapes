@@ -875,7 +875,11 @@ procedure TplDrawObject.SetoutsideObject(AValue: TplDrawObject);
 begin
   if FoutsideObject=AValue then Exit;
   FoutsideObject:=AValue;
-  if aValue <> nil then AValue.insideObject.Add(self)
+  if aValue <> nil then
+    begin
+       AValue.insideObject.Add(self);
+       self.Loaded;
+    end;
 end;
 
 procedure TplDrawObject.WriteData(S: TStream);
