@@ -1749,6 +1749,10 @@ begin
   AddToPropStrings('Top', IntToStr(Top));
   AddToPropStrings('Width', IntToStr(Width));
   AddToPropStrings('UseHitTest', GetEnumProp(self, 'UseHitTest'));
+  AddToPropStrings('showLeftDimension',GetEnumProp(Self,'showLeftDimension'));
+  AddToPropStrings('showTopDimension',GetEnumProp(Self,'showTopDimension'));
+  AddToPropStrings('showRightDimension',GetEnumProp(Self,'showRightDimension'));
+  AddToPropStrings('ShowBottomDimension',GetEnumProp(Self,'ShowBottomDimension'));
   if fStreamID <> '' then
     AddToPropStrings('ObjId', fStreamID);
   if assigned(fDataStream) then
