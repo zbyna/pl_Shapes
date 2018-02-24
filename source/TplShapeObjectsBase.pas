@@ -880,6 +880,8 @@ begin
   if aValue <> nil then
     begin
        AValue.insideObject.Add(self);
+       self.showRightDimension:=True;
+       self.showBottomDimension:=True;
        self.Loaded;
     end;
 end;
@@ -1271,17 +1273,29 @@ begin
       selfCenter:=self.ClientToScreen(self.ClientRect.CenterPoint);
       deltaCenters:=selfCenter - outsideCenter;
       if deltaCenters.x > 0 then
-         drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                            TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True)
+        begin
+          if showLeftDimension then
+             drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+                                TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True)
+        end
       else
-         drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
-                            TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+        begin
+          if showRightDimension then
+             drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
+                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+        end;
       if deltaCenters.y > 0 then
-         drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                            TPoint.Create(pomRect.Right,pomRect.top),-1,10,True)
+        begin
+           if showTopDimension then
+              drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+                                 TPoint.Create(pomRect.Right,pomRect.top),-1,10,True)
+        end
       else
-         drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
-                            TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+        begin
+           if showBottomDimension then
+              drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
+                                 TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+        end;
     end
   else
     begin
