@@ -781,6 +781,9 @@ begin
   fShowDimensions[2]:=True;
   fShowDimensions[3]:=False;
   fShowDimensions[4]:=False;
+  // needed for drag and drop
+  DragMode:=dmAutomatic;
+  DragKind:=dkDrag;
 end;
 
 destructor TplDrawObject.Destroy;
