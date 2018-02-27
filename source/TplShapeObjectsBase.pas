@@ -77,7 +77,7 @@ type
 
     fmarginForDimensions : Integer;
     foutsideObject: TplDrawObject;
-    fShowDimensions: array[1..5] of Boolean;
+    fShowDimensions: array[1..6] of Boolean;
 
     fPen: TPenEx;
     fPropStrings: TStrings;
@@ -191,6 +191,7 @@ type
     property showRightDimension: Boolean index 3  read GetshowDimensions write SetshowDimensions;
     property showBottomDimension: Boolean index 4  read GetshowDimensions write SetshowDimensions;
     property showExternalDimensions: Boolean index 5  read GetshowDimensions write SetshowDimensions;
+    property showSpecialDimensions: Boolean index 6  read GetshowDimensions write SetshowDimensions;
     property outsideObject : TplDrawObject read FoutsideObject write SetoutsideObject;
     property EnableDrawDimensions :Boolean read FEnableDrawDimensions write SetEnableDrawDimensions;
     property ButtonSize: integer read fBtnSize write SetBtnSize;
@@ -783,6 +784,7 @@ begin
   fShowDimensions[3]:=False;
   fShowDimensions[4]:=False;
   fShowDimensions[5]:=True;
+  fShowDimensions[6]:=True;
   // needed for drag and drop
   DragMode:=dmAutomatic;
   DragKind:=dkDrag;
@@ -1771,6 +1773,7 @@ begin
   AddToPropStrings('showRightDimension',GetEnumProp(Self,'showRightDimension'));
   AddToPropStrings('ShowBottomDimension',GetEnumProp(Self,'ShowBottomDimension'));
   AddToPropStrings('showExternalDimensions',GetEnumProp(Self,'showExternalDimensions'));
+  AddToPropStrings('showSpecialDimensions',GetEnumProp(Self,'showSpecialDimensions'));
   if assigned(outsideObject) then
      AddToPropStrings('outsideObject', inttohex(ptrint(outsideObject), 8));
      {the rest eg. adding referenc to insideObject.TComponentList
