@@ -3553,10 +3553,10 @@ var
   size: TSize;
 begin
   size.cx := 0;
-  size.cy := bitmap.canvas.TextHeight('Yy') * (Strings.Count + 1);
+  size.cy := bitmap.CanvasBGRA.TextHeight('Yy') * (Strings.Count + 1);
   for i := 0 to Strings.Count - 1 do
   begin
-    w := bitmap.canvas.TextWidth(Strings[i]);
+    w := bitmap.CanvasBGRA.TextWidth(Strings[i]);
     if w > size.cx then
       size.cx := w;
   end;
