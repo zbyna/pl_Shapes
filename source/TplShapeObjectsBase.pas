@@ -102,7 +102,6 @@ type
     function GetshowDimensions(Index: Integer): Boolean;
     procedure SetshowDimensions(Index: Integer; AValue: Boolean);
     procedure SetEnableDrawDimensions(AValue: Boolean);
-    procedure SetoutsideObject(AValue: TplDrawObject);
     procedure WriteBtnData(S: TStream);
     procedure WriteData(S: TStream);
     procedure ReadBtnData(S: TStream);
@@ -120,7 +119,6 @@ type
     procedure PrepareBitmap; virtual;
     procedure FontChanged(Sender: TObject); override;
   protected
-
     SavedInfo: TSavedSizeInfo;
     procedure SetColor(aColor: TColor); virtual;
     procedure OffsetBtns(x, y: integer);
@@ -156,6 +154,7 @@ type
     property DataStream: TMemoryStream read fDataStream write fDataStream;
     property DistinctiveLastBtn: boolean read fDistinctiveLastBtn write fDistinctiveLastBtn;
     property PropStrings: TStrings read fPropStrings;
+    procedure SetoutsideObject(AValue: TplDrawObject); virtual;
   public
     insideObject : TcomponentList;
     BtnPoints: array of TPoint;  // by zbyna
@@ -1293,6 +1292,7 @@ begin
           if showRightDimension then
              drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
                                 TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+
         end;
       if deltaCenters.y > 0 then
         begin

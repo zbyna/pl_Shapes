@@ -271,6 +271,8 @@ type
     property Strings: TStrings read GetStrings write SetStrings;
   end;
 
+  { TplEllipse }
+
   TplEllipse = class(TplSolidWithText)
   private
     fBalloonPoint: TBalloonPoint;
@@ -291,6 +293,7 @@ type
     function ClosestScreenPt(FromScreenPt: TPoint): TPoint; override;
     function ResizeObjectToFiTText: boolean; override;
     procedure Rotate(degrees: integer); override;
+    procedure SetoutsideObject(AValue: TplDrawObject); override;
   published
     property BalloonPoint: TBalloonPoint read fBalloonPoint write SetBalloonPoint;
     property Regular: boolean read fRegular write SetRegular;
@@ -3266,6 +3269,8 @@ begin
   inherited;
   InternalSetCount(15);
   SeTplBezierButtons;
+  showLeftDimension:=False;
+  showTopDimension:=False;
   DoSaveInfo;
 end;
 
@@ -3692,6 +3697,13 @@ begin
     exit;
   inherited;
   SeTplBezierButtons;
+end;
+
+procedure TplEllipse.SetoutsideObject(AValue: TplDrawObject);
+begin
+  inherited SetoutsideObject(AValue);
+  showRightDimension:=False;
+  showBottomDimension:=False;
 end;
 
 procedure TplEllipse.SaveToPropStrings;
