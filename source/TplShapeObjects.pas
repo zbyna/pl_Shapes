@@ -286,6 +286,7 @@ type
     procedure InternalBtnMove(BtnIdx: integer; NewPt: TPoint); override;
   public
     procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); override;  //by zbyna
+    procedure drawSpecialDimensions(targetCanvas:TbgraCanvas); override;
     constructor Create(AOwner: TComponent); override;
     function ClosestScreenPt(FromScreenPt: TPoint): TPoint; override;
     function ResizeObjectToFiTText: boolean; override;
@@ -3544,6 +3545,67 @@ begin
     DrawStringsInEllipse(aCanvas, Strings);
   end;
 
+end;
+
+procedure TplEllipse.drawSpecialDimensions(targetCanvas: TbgraCanvas);
+var
+   radius : Integer;
+   pointOnCircle,point1,point2,point3,pointForText:TPoint;
+   a2,b2,c2 : Real;
+   lineVector:Tpoint;
+   distance, textPosition: Integer;
+   dimensionText: String;
+
+  procedure drawMarker(point1,lineVector:Tpoint;markLen:Byte);
+  var
+    point1Marker2: Tpoint;
+    point1Marker1: Tpoint;
+    c1: Real;
+    b1: Real;
+    a1: Real;
+  begin
+    markLen:=markLen div 2;
+    // standard equation of line in point1 perpendicular to lineVector
+    c1:=-1*(lineVector.x*point1.x + lineVector.y*point1.y);
+    a1:=-1*(lineVector.y*point1.y + c1)/point1.x;
+    b1:=-1*(a1*point1.x+c1)/point1.y;
+    point1Marker1:=Point(point1.x-markLen,round(-1*(a1*(point1.x-markLen)+c1)/b1));
+    point1Marker2:=Point(point1.x+markLen,round(-1*(a1*(point1.x+markLen)+c1)/b1));
+    targetCanvas.moveTo(point1Marker1);
+    targetCanvas.LineTo(point1Marker2);
+  end;
+
+  function pointsOnCircle(radius:integer): TPoint;
+  begin
+    Result:=Point(round(radius*cos(PI_Mul7_Div4)),
+                  round(radius*sin(PI_Mul7_Div4)));
+  end;
+
+begin
+  if not showSpecialDimensions then exit;
+  //inherited drawSpecialDimensions(targetCanvas);
+  radius:= ((height-2*marginForDimensions) div 2) ;
+  pointOnCircle:=pointsOnCircle(radius);
+  point1:= self.ClientRect.CenterPoint - pointOnCircle;
+  point2:= self.ClientRect.CenterPoint + pointOnCircle;
+  radius:= radius + 75;
+  point3:= self.ClientRect.CenterPoint+pointsOnCircle(radius);
+  targetCanvas.moveTo(point1);
+  targetCanvas.LineTo(point3);
+  // lineVector is normalVector of line determinited by Poin1,point2
+  lineVector:= point2 - point1;
+  drawMarker(point1,lineVector,20);
+  drawMarker(point2,lineVector,20);
+  // draw text
+  distance:=(height-2*marginForDimensions); //round(point1.Distance(point2));
+  dimensionText:= UnicodeToUTF8(8960)+inttostr(distance);
+  textPosition:= (75 - targetCanvas.TextWidth(dimensionText)) div 2;
+  pointForText:=point2 + pointsOnCircle(textPosition);
+  targetCanvas.Font.Height:=25;
+  targetCanvas.Font.Name:='DejaVu Sans Condensed';
+  targetCanvas.Brush.Style:=bsClear;
+  targetCanvas.Font.Orientation:=450;
+  targetCanvas.TextOut(pointForText.x - 20,pointForText.y - 20,dimensionText);
 end;
 
 

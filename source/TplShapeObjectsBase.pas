@@ -168,6 +168,7 @@ type
     procedure drawLineWithDimension(targetCanvas: TBGRACanvas;b1,b2:TPoint;kam,
                                                   markerDistance: integer;
                                                   enableMarginForDimensions:Boolean);
+    procedure drawSpecialDimensions(targetCanvas:TbgraCanvas); virtual;
     function Clone: TplDrawObject;
     function BtnIdxFromPt(pt: TPoint; ignoreDisabled: boolean; out BtnIdx: integer): boolean;
     function ObjectMidPoint: TPoint;
@@ -1001,6 +1002,7 @@ begin
 
   if EnableDrawDimensions then DrawOwnDimensions(inherited Bitmap.CanvasBGRA);
   if Assigned(insideObject) then drawExternalDimensions(inherited Bitmap.CanvasBGRA);
+  drawSpecialDimensions(inherited Bitmap.CanvasBGRA);
   if (Focused or (csDesigning in ComponentState)) then
     with inherited Bitmap.CanvasBGRA  do
       begin
@@ -1256,6 +1258,11 @@ begin
                               b1.y + round(distanceB1B2) div 2 ,
                                FloatToStr(distanceB1B2))
     end;
+end;
+
+procedure TplDrawObject.drawSpecialDimensions(targetCanvas: TbgraCanvas);
+begin
+  // needed to override in descendants where relevant (ie. TplEli)
 end;
 
 procedure TplDrawObject.DrawOwnDimensions(targetCanvas: TBgraCanvas);
