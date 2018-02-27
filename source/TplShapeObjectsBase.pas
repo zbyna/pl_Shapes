@@ -1212,6 +1212,7 @@ var
   distanceB1B2:float;
 begin
   distanceB1B2:=b1.Distance(b2);
+  targetCanvas.Font.Name:='DejaVu Sans Condensed';
   targetCanvas.Font.Height:=25;
   targetCanvas.Brush.Style:=bsClear;
   if enableMarginForDimensions then
