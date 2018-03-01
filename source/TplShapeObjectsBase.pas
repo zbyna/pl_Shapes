@@ -100,6 +100,7 @@ type
     fDataStream: TMemoryStream;
     fFocusChangedEvent: TNotifyEvent;
     function GetshowDimensions(Index: Integer): Boolean;
+    procedure SetmarginForDimensions(AValue: integer);
     procedure SetshowDimensions(Index: Integer; AValue: Boolean);
     procedure SetEnableDrawDimensions(AValue: Boolean);
     procedure WriteBtnData(S: TStream);
@@ -182,10 +183,10 @@ type
     property Bitmap: TbgraBitmap read GetBitmap;
     property CanMove: boolean read GetCanMove;
     property Margin: integer read fMargin write fMargin;
-    property marginForDimensions : integer read fmarginForDimensions write fmarginForDimensions;
     property Moving: boolean read fMoving;
     property showDimensions [Index: Integer]: Boolean read GetshowDimensions write SetshowDimensions;
   published
+    property marginForDimensions : integer read fmarginForDimensions write SetmarginForDimensions;
     property showLeftDimension: Boolean index 1  read GetshowDimensions write SetshowDimensions;
     property showTopDimension: Boolean index 2  read GetshowDimensions write SetshowDimensions;
     property showRightDimension: Boolean index 3  read GetshowDimensions write SetshowDimensions;
@@ -846,7 +847,8 @@ begin
      begin
      //  It is needed to solve properly, as workaround
      //  direct fmarginForDimesions := Margin_FOR_DIMENSIONS in constructor
-       fmarginForDimensions:=MARGIN_FOR_DIMENSIONS;
+       if fmarginForDimensions=2 then
+            fmarginForDimensions:=MARGIN_FOR_DIMENSIONS;
        CalcMargin;
        fUpdateNeeded:=True;
        self.Loaded;
@@ -864,6 +866,15 @@ end;
 function TplDrawObject.GetshowDimensions(Index: Integer): Boolean;
 begin
   Result:=fShowDimensions[Index];
+end;
+
+procedure TplDrawObject.SetmarginForDimensions(AValue: integer);
+begin
+  if fmarginForDimensions=AValue then Exit;
+  fmarginForDimensions:=AValue;
+  CalcMargin;
+  fUpdateNeeded:=True;
+  self.Loaded;
 end;
 
 procedure TplDrawObject.SetshowDimensions(Index: Integer; AValue: Boolean);
@@ -1782,6 +1793,7 @@ begin
   AddToPropStrings('ShowBottomDimension',GetEnumProp(Self,'ShowBottomDimension'));
   AddToPropStrings('showExternalDimensions',GetEnumProp(Self,'showExternalDimensions'));
   AddToPropStrings('showSpecialDimensions',GetEnumProp(Self,'showSpecialDimensions'));
+  AddToPropStrings('marginForDimensions', IntToStr(marginForDimensions));
   if assigned(outsideObject) then
      AddToPropStrings('outsideObject', inttohex(ptrint(outsideObject), 8));
      {the rest eg. adding referenc to insideObject.TComponentList
