@@ -1010,9 +1010,13 @@ begin
 
   inherited Bitmap.Assign(fBitmap);
 
-  if EnableDrawDimensions then DrawOwnDimensions(inherited Bitmap.CanvasBGRA);
+  if EnableDrawDimensions then
+    begin
+        DrawOwnDimensions(inherited Bitmap.CanvasBGRA);
+        drawSpecialDimensions(inherited Bitmap.CanvasBGRA);
+    end;
   if Assigned(insideObject) then drawExternalDimensions(inherited Bitmap.CanvasBGRA);
-  drawSpecialDimensions(inherited Bitmap.CanvasBGRA);
+
   if (Focused or (csDesigning in ComponentState)) then
     with inherited Bitmap.CanvasBGRA  do
       begin
