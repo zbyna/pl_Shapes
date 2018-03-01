@@ -1360,9 +1360,9 @@ begin
           // middle point of pomInsideObject transformed to client coordinates
           // through screen coordinates, adjusted for fmarginForDimensions
           // to reach shape edge (not client rect)
-          p1:=  ScreenToClient(pomInsideObject.ClientToScreen(
-                   pomInsideObject.ClientRect.CenterPoint + Tpoint.create(
-                   - (pomInsideObject.Width - 2*fmarginForDimensions) div 2 ,0)));
+          p1:= ScreenToClient(pomInsideObject.ClientToScreen(
+                 pomInsideObject.ClientRect.CenterPoint + Tpoint.create(
+                 -(pomInsideObject.Width-2*pomInsideObject.fmarginForDimensions)div 2,0)));
           // point on left border of self
           b1:=TPoint.create(self.ClientRect.Left + fmarginForDimensions,p1.y);
           pomInsideObject.drawLineWithDimension(targetCanvas,b1,p1,1,10,False);
@@ -1370,9 +1370,9 @@ begin
       else
           begin
             // binding to the right border of self
-            p4:=  ScreenToClient(pomInsideObject.ClientToScreen(
-                       pomInsideObject.ClientRect.CenterPoint + Tpoint.create(
-                       + (pomInsideObject.Width - 2*fmarginForDimensions) div 2 ,0)));
+            p4:=ScreenToClient(pomInsideObject.ClientToScreen(
+                  pomInsideObject.ClientRect.CenterPoint + Tpoint.create(
+                  +(pomInsideObject.Width-2*pomInsideObject.fmarginForDimensions)div 2,0)));
             // point on right border of self
             b4:=TPoint.create(self.ClientRect.Right - fmarginForDimensions,p4.y);
             pomInsideObject.drawLineWithDimension(targetCanvas,p4,b4,1,10,False);
@@ -1382,7 +1382,7 @@ begin
           // ----- binding to the top border of self -----
           p2 := ScreenToClient(pomInsideObject.ClientToScreen(
                    pomInsideObject.ClientRect.CenterPoint + Tpoint.create(0,
-                   - (pomInsideObject.Height - 2*fmarginForDimensions) div 2)));
+                   -(pomInsideObject.Height-2*pomInsideObject.fmarginForDimensions)div 2)));
           // point on top border of self
           b2:= TPoint.create(p2.x,self.ClientRect.Top + fmarginForDimensions);
           pomInsideObject.drawLineWithDimension(targetCanvas,b2,p2 ,1,10,False);
@@ -1390,9 +1390,9 @@ begin
      else
         begin
           // ----- binding to the bottom border of self -----
-            p3:= ScreenToClient(pomInsideObject.ClientToScreen(
-                     pomInsideObject.ClientRect.CenterPoint + Tpoint.create(0,
-                     + (pomInsideObject.Height - 2*fmarginForDimensions) div 2)));
+          p3:= ScreenToClient(pomInsideObject.ClientToScreen(
+                pomInsideObject.ClientRect.CenterPoint + Tpoint.create(0,
+                 +(pomInsideObject.Height-2*pomInsideObject.fmarginForDimensions)div 2)));
             // point on bottom border of self
             b3:= TPoint.create(p3.x, self.ClientRect.bottom - fmarginForDimensions);
             pomInsideObject.drawLineWithDimension(targetCanvas,p3,b3 ,1,10,False);
