@@ -1399,7 +1399,7 @@ begin
       insideCenter:= pomInsideObject.ClientToScreen(pomInsideObject.ClientRect.CenterPoint);
       selfCenter:=self.ClientToScreen(self.ClientRect.CenterPoint);
       deltaCenters:=selfCenter - insideCenter;
-      if deltaCenters.x > 0 then
+      if deltaCenters.x >= 0 then
          begin
            // ----- binding to the left border of self -----
           // middle point of pomInsideObject transformed to client coordinates
@@ -1422,7 +1422,7 @@ begin
             b4:=TPoint.create(self.ClientRect.Right - fmarginForDimensions,p4.y);
             pomInsideObject.drawLineWithDimension(targetCanvas,p4,b4,1,10,False);
           end ;
-     if deltaCenters.y > 0 then
+     if deltaCenters.y >= 0 then
         begin
           // ----- binding to the top border of self -----
           p2 := ScreenToClient(pomInsideObject.ClientToScreen(
