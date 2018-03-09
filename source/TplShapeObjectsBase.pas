@@ -161,6 +161,7 @@ type
     BtnPoints: array of TPoint;  // by zbyna
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure Print(targetCanvas:TBGRACanvas;x,y:LongInt);
     procedure DrawObject(aCanvas: TbgraCanvas; IsShadow: boolean); virtual;
     procedure Draw(targetCanvas: TbgraCanvas; offsetX, offsetY: integer);
     procedure DrawOwnDimensions(targetCanvas:TBgraCanvas); virtuaL;
@@ -1034,6 +1035,46 @@ begin
             (i = ButtonCount - 1) and fDistinctiveLastBtn);
       end;
   inherited Paint;
+end;
+
+procedure TplDrawObject.Print(targetCanvas:TBGRACanvas;x,y:LongInt);
+var
+  i: integer;
+begin
+
+  if fResizeNeeded then
+    InternalResize;
+  if fUpdateNeeded then
+    PrepareBitmap;
+
+  inherited Bitmap.Assign(fBitmap);
+
+  if EnableDrawDimensions then
+    begin
+        DrawOwnDimensions(inherited Bitmap.CanvasBGRA);
+        drawSpecialDimensions(inherited Bitmap.CanvasBGRA);
+    end;
+  if Assigned(insideObject) then drawExternalDimensions(inherited Bitmap.CanvasBGRA);
+
+  if (Focused or (csDesigning in ComponentState)) then
+    with inherited Bitmap.CanvasBGRA  do
+      begin
+        //draw control lines ...
+        Pen.Color := FOCUSED_DESIGN_COLOR;
+        Pen.Width := 1;
+        Pen.Style := psDot;
+        Brush.Style := bsClear;
+        Rectangle(ClientRect);
+        DrawControlLines;
+        //finally, draw buttons ...
+        Pen.Style := psSolid;
+        for i := 0 to ButtonCount - 1 do
+          DrawBtn(BtnPoints[i], i, i = fPressedBtnIdx,
+            (i = ButtonCount - 1) and fDistinctiveLastBtn);
+      end;
+  //inherited Paint;
+  //inherited Bitmap.Draw(targetCanvas,x,y,False);
+  targetCanvas.Draw(x,y,inherited Bitmap);
 end;
 
 procedure TplDrawObject.Loaded;
