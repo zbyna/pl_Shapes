@@ -3603,7 +3603,8 @@ begin
   drawMarker(point2,lineVector,20);
   // draw text
   distance:=(height-2*marginForDimensions); //round(point1.Distance(point2));
-  dimensionText:= UnicodeToUTF8(8960)+inttostr(distance);
+  dimensionText:= UnicodeToUTF8(8960)+FloatToStrF(distance*self.ratioForDimensions,
+                                                  ffFixed,4,2);
   textPosition:= (75 - targetCanvas.TextWidth(dimensionText)) div 2;
   pointForText:=point2 + pointsOnCircle(textPosition);
   targetCanvas.Font.Height:=25;

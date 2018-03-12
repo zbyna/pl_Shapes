@@ -78,6 +78,7 @@ type
     fmarginForDimensions : Integer;
     foutsideObject: TplDrawObject;
     fShowDimensions: array[1..6] of Boolean;
+    fratioForDimensions: float;
 
     fPen: TPenEx;
     fPropStrings: TStrings;
@@ -101,6 +102,7 @@ type
     fFocusChangedEvent: TNotifyEvent;
     function GetshowDimensions(Index: Integer): Boolean;
     procedure SetmarginForDimensions(AValue: integer);
+    procedure SetratioForDimensions(AValue: float);
     procedure SetshowDimensions(Index: Integer; AValue: Boolean);
     procedure SetEnableDrawDimensions(AValue: Boolean);
     procedure WriteBtnData(S: TStream);
@@ -187,6 +189,7 @@ type
     property Moving: boolean read fMoving;
     property showDimensions [Index: Integer]: Boolean read GetshowDimensions write SetshowDimensions;
   published
+    property ratioForDimensions : float read FratioForDimensions write SetratioForDimensions;
     property marginForDimensions : integer read fmarginForDimensions write SetmarginForDimensions;
     property showLeftDimension: Boolean index 1  read GetshowDimensions write SetshowDimensions;
     property showTopDimension: Boolean index 2  read GetshowDimensions write SetshowDimensions;
@@ -790,6 +793,8 @@ begin
   // needed for drag and drop
   DragMode:=dmAutomatic;
   DragKind:=dkDrag;
+  // for calculating pixel to mm unit
+  fratioForDimensions:=1;
 end;
 
 destructor TplDrawObject.Destroy;
@@ -874,6 +879,14 @@ begin
   if fmarginForDimensions=AValue then Exit;
   fmarginForDimensions:=AValue;
   CalcMargin;
+  fUpdateNeeded:=True;
+  self.Loaded;
+end;
+
+procedure TplDrawObject.SetratioForDimensions(AValue: float);
+begin
+  if FratioForDimensions=AValue then Exit;
+  FratioForDimensions:=AValue;
   fUpdateNeeded:=True;
   self.Loaded;
 end;
@@ -1265,8 +1278,12 @@ var
   pomS:Integer;
   rectForText : TRect;
   distanceB1B2:float;
+  dimensionText:String;
+  lengthDimensionText:Integer;
 begin
   distanceB1B2:=b1.Distance(b2);
+  dimensionText:=FloatToStrF(distanceB1B2*self.ratioForDimensions,ffFixed,4,1);
+  lengthDimensionText:=targetCanvas.TextWidth(dimensionText);
   targetCanvas.Font.Name:='DejaVu Sans Condensed';
   targetCanvas.Font.Height:=25;
   targetCanvas.Brush.Style:=bsClear;
@@ -1285,13 +1302,13 @@ begin
       targetCanvas.LineTo(b2.x,b2.y + pomS div 2);
       targetCanvas.Font.Orientation:=0;
       if kam < 0 then
-              targetCanvas.TextOut(b1.x +round(distanceB1B2) div 2,
-                                    b2.y+pomS,FloatToStr(distanceB1B2))
+              targetCanvas.TextOut(b1.x + (round(distanceB1B2)-lengthDimensionText) div 2,
+                                   b2.y + pomS,dimensionText)
 
 
              else
-               targetCanvas.TextOut(b1.x + round(distanceB1B2) div 2,
-                                     b2.y + pomS div 2,FloatToStr(distanceB1B2));
+              targetCanvas.TextOut(b1.x + (round(distanceB1B2)-lengthDimensionText) div 2,
+                                    b2.y + pomS div 2,dimensionText);
 
 
     end
@@ -1307,12 +1324,12 @@ begin
       targetCanvas.Font.Orientation:=900;
       if kam < 0 then
          targetCanvas.TextOut(b1.x + pomS,
-                              b1.y + round(distanceB1B2) div 2,
-                              FloatToStr(distanceB1B2))
+                              b1.y + (round(distanceB1B2)+lengthDimensionText) div 2,
+                              dimensionText)
                  else
          targetCanvas.TextOut(b1.x + pomS div 2,
-                              b1.y + round(distanceB1B2) div 2 ,
-                               FloatToStr(distanceB1B2))
+                              b1.y + (round(distanceB1B2)+lengthDimensionText) div 2 ,
+                               dimensionText)
     end;
 end;
 
@@ -1839,6 +1856,7 @@ begin
   AddToPropStrings('showExternalDimensions',GetEnumProp(Self,'showExternalDimensions'));
   AddToPropStrings('showSpecialDimensions',GetEnumProp(Self,'showSpecialDimensions'));
   AddToPropStrings('marginForDimensions', IntToStr(marginForDimensions));
+  AddToPropStrings('ratioForDimensions', FloatToStr(ratioForDimensions));
   if assigned(outsideObject) then
      AddToPropStrings('outsideObject', inttohex(ptrint(outsideObject), 8));
      {the rest eg. adding referenc to insideObject.TComponentList
@@ -2019,6 +2037,7 @@ begin
             tkInteger    :SetPropValue(self, propName, StrToIntDef(propVal,0));
             tkLString    :SetPropValue(self, propName, propVal);
             tkSet        :SetSetProp(self, propName, propVal);
+            tkFloat      :SetFloatProp(self,propName,StrToFloat(propVal));
             tkClass:
             begin
               if assigned(ObjPropertyList) and GetObjectPropClass(Self, PropName).InheritsFrom(TplDrawObject) then
