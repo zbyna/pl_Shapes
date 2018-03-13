@@ -78,6 +78,7 @@ type
     fmarginForDimensions : Integer;
     foutsideObject: TplDrawObject;
     fShowDimensions: array[1..6] of Boolean;
+    fCustomDimensions: array[1..5] of float;
     fratioForDimensions: float;
 
     fPen: TPenEx;
@@ -100,7 +101,9 @@ type
     fStreamID: string;
     fDataStream: TMemoryStream;
     fFocusChangedEvent: TNotifyEvent;
+    function GetCustomDimensions(AIndex: Integer): Float;
     function GetshowDimensions(Index: Integer): Boolean;
+    procedure SetCustomDimensions(AIndex: Integer; AValue: Float);
     procedure SetmarginForDimensions(AValue: integer);
     procedure SetratioForDimensions(AValue: float);
     procedure SetshowDimensions(Index: Integer; AValue: Boolean);
@@ -188,6 +191,7 @@ type
     property Margin: integer read fMargin write fMargin;
     property Moving: boolean read fMoving;
     property showDimensions [Index: Integer]: Boolean read GetshowDimensions write SetshowDimensions;
+    property customDimensions [Index: Integer]: Float read GetCustomDimensions write SetCustomDimensions;
   published
     property ratioForDimensions : float read FratioForDimensions write SetratioForDimensions;
     property marginForDimensions : integer read fmarginForDimensions write SetmarginForDimensions;
@@ -197,6 +201,11 @@ type
     property showBottomDimension: Boolean index 4  read GetshowDimensions write SetshowDimensions;
     property showExternalDimensions: Boolean index 5  read GetshowDimensions write SetshowDimensions;
     property showSpecialDimensions: Boolean index 6  read GetshowDimensions write SetshowDimensions;
+    property custHeightDimension: Float index 1  read GetCustomDimensions write SetCustomDimensions;
+    property custWidthDimension: Float index 2  read GetCustomDimensions write SetCustomDimensions;
+    property custExternalHeightDim: Float index 3  read GetCustomDimensions write SetCustomDimensions;
+    property custExternalWidthDim: Float index 4  read GetCustomDimensions write SetCustomDimensions;
+    property custSpecialDimension: Float index 5  read GetCustomDimensions write SetCustomDimensions;
     property outsideObject : TplDrawObject read FoutsideObject write SetoutsideObject;
     property EnableDrawDimensions :Boolean read FEnableDrawDimensions write SetEnableDrawDimensions;
     property ButtonSize: integer read fBtnSize write SetBtnSize;
@@ -795,6 +804,11 @@ begin
   DragKind:=dkDrag;
   // for calculating pixel to mm unit
   fratioForDimensions:=1;
+  fcustomDimensions[1]:=0;
+  fcustomDimensions[2]:=0;
+  fcustomDimensions[3]:=0;
+  fcustomDimensions[4]:=0;
+  fcustomDimensions[5]:=0;
 end;
 
 destructor TplDrawObject.Destroy;
@@ -872,6 +886,20 @@ end;
 function TplDrawObject.GetshowDimensions(Index: Integer): Boolean;
 begin
   Result:=fShowDimensions[Index];
+end;
+
+function TplDrawObject.GetCustomDimensions(AIndex: Integer): Float;
+begin
+  Result:=fCustomDimensions[aIndex];
+end;
+
+procedure TplDrawObject.SetCustomDimensions(AIndex: Integer; AValue: Float);
+begin
+  if AValue <> fCustomDimensions[aIndex] then
+     begin
+        fCustomDimensions[aIndex]:=aValue;
+        Loaded;
+     end;
 end;
 
 procedure TplDrawObject.SetmarginForDimensions(AValue: integer);
@@ -1857,6 +1885,11 @@ begin
   AddToPropStrings('showSpecialDimensions',GetEnumProp(Self,'showSpecialDimensions'));
   AddToPropStrings('marginForDimensions', IntToStr(marginForDimensions));
   AddToPropStrings('ratioForDimensions', FloatToStr(ratioForDimensions));
+  AddToPropStrings('custHeightDimension', FloatToStr(custHeightDimension));
+  AddToPropStrings('custWidthDimension', FloatToStr(custWidthDimension));
+  AddToPropStrings('custExternalHeightDim', FloatToStr(custExternalHeightDim));
+  AddToPropStrings('custExternalWidthDim', FloatToStr(custExternalWidthDim));
+  AddToPropStrings('custSpecialDimension', FloatToStr(custSpecialDimension));
   if assigned(outsideObject) then
      AddToPropStrings('outsideObject', inttohex(ptrint(outsideObject), 8));
      {the rest eg. adding referenc to insideObject.TComponentList
