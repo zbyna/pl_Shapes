@@ -173,7 +173,8 @@ type
     procedure drawExternalDimensions(targetCanvas:TbgraCanvas); virtual;
     procedure drawLineWithDimension(targetCanvas: TBGRACanvas;b1,b2:TPoint;kam,
                                                   markerDistance: integer;
-                                                  enableMarginForDimensions:Boolean);
+                                    enableMarginForDimensions:Boolean;
+                                    customDim:Float);
     procedure drawSpecialDimensions(targetCanvas:TbgraCanvas); virtual;
     function Clone: TplDrawObject;
     function BtnIdxFromPt(pt: TPoint; ignoreDisabled: boolean; out BtnIdx: integer): boolean;
@@ -1299,7 +1300,8 @@ end;
 procedure TplDrawObject.drawLineWithDimension(targetCanvas: TBGRACanvas;
                                               b1,b2:TPoint;
                                               kam,markerDistance:integer;
-                                              enableMarginForDimensions:Boolean);
+                                              enableMarginForDimensions:Boolean;
+                                              customDim:Float);
 // markerDistance -  distance from upper and bottom border within
 // marginForDimensions area
 var
@@ -1310,6 +1312,9 @@ var
   lengthDimensionText:Integer;
 begin
   distanceB1B2:=b1.Distance(b2);
+  if customDim <> 0 then
+      dimensionText:=FloatToStrF(customDim,ffFixed,4,1)
+  else
   dimensionText:=FloatToStrF(distanceB1B2*self.ratioForDimensions,ffFixed,4,1);
   lengthDimensionText:=targetCanvas.TextWidth(dimensionText);
   targetCanvas.Font.Name:='DejaVu Sans Condensed';
@@ -1386,42 +1391,50 @@ begin
         begin
           if showLeftDimension then
              drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                                TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True)
+                                TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True,
+                                custHeightDimension)
         end
       else
         begin
           if showRightDimension then
              drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
-                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
+                                custHeightDimension);
 
         end;
       if deltaCenters.y > 0 then
         begin
            if showTopDimension then
               drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                                 TPoint.Create(pomRect.Right,pomRect.top),-1,10,True)
+                                 TPoint.Create(pomRect.Right,pomRect.top),-1,10,True,
+                                 custWidthDimension)
         end
       else
         begin
            if showBottomDimension then
               drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
-                                 TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+                                 TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
+                                 custWidthDimension);
         end;
     end
   else
     begin
       if  showTopDimension then
           drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                                TPoint.Create(pomRect.Right,pomRect.top),-1,10,True);
+                                TPoint.Create(pomRect.Right,pomRect.top),-1,10,True,
+                                custWidthDimension);
       if  showLeftDimension then
           drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                                TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True);
+                                TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True,
+                                custHeightDimension);
       if showRightDimension then
           drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
-                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
+                                custHeightDimension);
       if showBottomDimension then
          drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
-                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True);
+                               TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
+                               custWidthDimension);
     end;
   //targetCanvas.brush.Style:=bsClear;
   //targetCanvas.Rectangle(pomRect);
@@ -1455,7 +1468,8 @@ begin
                  -(pomInsideObject.Width-2*pomInsideObject.fmarginForDimensions)div 2,0)));
           // point on left border of self
           b1:=TPoint.create(self.ClientRect.Left + fmarginForDimensions,p1.y);
-          pomInsideObject.drawLineWithDimension(targetCanvas,b1,p1,1,10,False);
+          pomInsideObject.drawLineWithDimension(targetCanvas,b1,p1,1,10,False,
+                                                pomInsideObject.custExternalWidthDim);
          end
       else
           begin
@@ -1465,7 +1479,8 @@ begin
                   +(pomInsideObject.Width-2*pomInsideObject.fmarginForDimensions)div 2,0)));
             // point on right border of self
             b4:=TPoint.create(self.ClientRect.Right - fmarginForDimensions,p4.y);
-            pomInsideObject.drawLineWithDimension(targetCanvas,p4,b4,1,10,False);
+            pomInsideObject.drawLineWithDimension(targetCanvas,p4,b4,1,10,False,
+                                                  pomInsideObject.custExternalWidthDim);
           end ;
      if deltaCenters.y >= 0 then
         begin
@@ -1475,7 +1490,8 @@ begin
                    -(pomInsideObject.Height-2*pomInsideObject.fmarginForDimensions)div 2)));
           // point on top border of self
           b2:= TPoint.create(p2.x,self.ClientRect.Top + fmarginForDimensions);
-          pomInsideObject.drawLineWithDimension(targetCanvas,b2,p2 ,1,10,False);
+          pomInsideObject.drawLineWithDimension(targetCanvas,b2,p2 ,1,10,False,
+                                                pomInsideObject.custExternalHeightDim);
         end
      else
         begin
@@ -1485,7 +1501,8 @@ begin
                  +(pomInsideObject.Height-2*pomInsideObject.fmarginForDimensions)div 2)));
             // point on bottom border of self
             b3:= TPoint.create(p3.x, self.ClientRect.bottom - fmarginForDimensions);
-            pomInsideObject.drawLineWithDimension(targetCanvas,p3,b3 ,1,10,False);
+            pomInsideObject.drawLineWithDimension(targetCanvas,p3,b3 ,1,10,False,
+                                                  pomInsideObject.custExternalHeightDim);
         end
     end;
 end;
