@@ -172,7 +172,7 @@ type
     procedure DrawOwnDimensions(targetCanvas:TBgraCanvas); virtuaL;
     procedure drawExternalDimensions(targetCanvas:TbgraCanvas); virtual;
     procedure drawLineWithDimension(targetCanvas: TBGRACanvas;b1,b2:TPoint;kam,
-                                                  markerDistance: integer;
+                                    markerDistance: integer;
                                     enableMarginForDimensions:Boolean;
                                     customDim:Float);
     procedure drawSpecialDimensions(targetCanvas:TbgraCanvas); virtual;
@@ -889,6 +889,15 @@ begin
   Result:=fShowDimensions[Index];
 end;
 
+procedure TplDrawObject.SetshowDimensions(Index: Integer; AValue: Boolean);
+begin
+  if AValue <> fShowDimensions[Index] then
+     begin
+        fShowDimensions[Index]:=AValue;
+        Loaded;
+     end;
+end;
+
 function TplDrawObject.GetCustomDimensions(AIndex: Integer): Float;
 begin
   Result:=fCustomDimensions[aIndex];
@@ -918,15 +927,6 @@ begin
   FratioForDimensions:=AValue;
   fUpdateNeeded:=True;
   self.Loaded;
-end;
-
-procedure TplDrawObject.SetshowDimensions(Index: Integer; AValue: Boolean);
-begin
-  if AValue <> fShowDimensions[Index] then
-     begin
-        fShowDimensions[Index]:=AValue;
-        Loaded;
-     end;
 end;
 
 procedure TplDrawObject.SetoutsideObject(AValue: TplDrawObject);
@@ -1315,7 +1315,7 @@ begin
   if customDim <> 0 then
       dimensionText:=FloatToStrF(customDim,ffFixed,4,1)
   else
-  dimensionText:=FloatToStrF(distanceB1B2*self.ratioForDimensions,ffFixed,4,1);
+      dimensionText:=FloatToStrF(distanceB1B2*self.ratioForDimensions,ffFixed,4,1);
   lengthDimensionText:=targetCanvas.TextWidth(dimensionText);
   targetCanvas.Font.Name:='DejaVu Sans Condensed';
   targetCanvas.Font.Height:=25;
