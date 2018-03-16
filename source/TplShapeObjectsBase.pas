@@ -74,6 +74,7 @@ type
   private
     fBitmap: TBGRABitmap;
     FEnableDrawDimensions: Boolean;
+    FheightInUnits: Float;
 
     fmarginForDimensions : Integer;
     foutsideObject: TplDrawObject;
@@ -101,13 +102,16 @@ type
     fStreamID: string;
     fDataStream: TMemoryStream;
     fFocusChangedEvent: TNotifyEvent;
+    FwidthInUnits: Float;
     function GetCustomDimensions(AIndex: Integer): Float;
     function GetshowDimensions(Index: Integer): Boolean;
     procedure SetCustomDimensions(AIndex: Integer; AValue: Float);
+    procedure SetheightInUnits(AValue: Float);
     procedure SetmarginForDimensions(AValue: integer);
     procedure SetratioForDimensions(AValue: float);
     procedure SetshowDimensions(Index: Integer; AValue: Boolean);
     procedure SetEnableDrawDimensions(AValue: Boolean);
+    procedure SetwidthInUnits(AValue: Float);
     procedure WriteBtnData(S: TStream);
     procedure WriteData(S: TStream);
     procedure ReadBtnData(S: TStream);
@@ -207,6 +211,8 @@ type
     property custExternalHeightDim: Float index 3  read GetCustomDimensions write SetCustomDimensions;
     property custExternalWidthDim: Float index 4  read GetCustomDimensions write SetCustomDimensions;
     property custSpecialDimension: Float index 5  read GetCustomDimensions write SetCustomDimensions;
+    property heightInUnits:Float read FheightInUnits write SetheightInUnits;
+    property widthInUnits:Float read FwidthInUnits write SetwidthInUnits;
     property outsideObject : TplDrawObject read FoutsideObject write SetoutsideObject;
     property EnableDrawDimensions :Boolean read FEnableDrawDimensions write SetEnableDrawDimensions;
     property ButtonSize: integer read fBtnSize write SetBtnSize;
@@ -884,6 +890,24 @@ begin
      end;
 end;
 
+procedure TplDrawObject.SetwidthInUnits(AValue: Float);
+begin
+  if (FwidthInUnits=AValue) or (AValue=0) then Exit;
+  FwidthInUnits:=AValue;
+  //fratioForDimensions:=widthInUnits/(width-2*fmarginForDimensions);
+  width:=round(widthInUnits/fratioForDimensions+2*fmarginForDimensions);
+  self.Loaded;
+end;
+
+procedure TplDrawObject.SetheightInUnits(AValue: Float);
+begin
+  if (FheightInUnits=AValue) or (AValue=0) then Exit;
+  FheightInUnits:=AValue;
+  //fratioForDimensions:=heightInUnits/(height-2*fmarginForDimensions);
+  Height:=round(heightInUnits/fratioForDimensions+2*fmarginForDimensions);
+  self.Loaded;
+end;
+
 function TplDrawObject.GetshowDimensions(Index: Integer): Boolean;
 begin
   Result:=fShowDimensions[Index];
@@ -925,6 +949,9 @@ procedure TplDrawObject.SetratioForDimensions(AValue: float);
 begin
   if FratioForDimensions=AValue then Exit;
   FratioForDimensions:=AValue;
+  //fratioForDimensions:=widthInUnits/(width-2*fmarginForDimensions)
+  fwidthInUnits:=fratioForDimensions*(width-2*fmarginForDimensions);
+  fheightInUnits:=fratioForDimensions*(Height-2*fmarginForDimensions);
   fUpdateNeeded:=True;
   self.Loaded;
 end;
@@ -1307,15 +1334,16 @@ procedure TplDrawObject.drawLineWithDimension(targetCanvas: TBGRACanvas;
 var
   pomS:Integer;
   rectForText : TRect;
-  distanceB1B2:float;
+  distanceB1B2, distanceMultiplayRatio:float;
   dimensionText:String;
   lengthDimensionText:Integer;
 begin
   distanceB1B2:=b1.Distance(b2);
+  distanceMultiplayRatio:= distanceB1B2*fratioForDimensions;
   if customDim <> 0 then
       dimensionText:=FloatToStrF(customDim,ffFixed,4,1)
   else
-      dimensionText:=FloatToStrF(distanceB1B2*self.ratioForDimensions,ffFixed,4,1);
+      dimensionText:=FloatToStrF(distanceMultiplayRatio,ffFixed,4,1);
   lengthDimensionText:=targetCanvas.TextWidth(dimensionText);
   targetCanvas.Font.Name:='DejaVu Sans Condensed';
   targetCanvas.Font.Height:=25;
@@ -1327,6 +1355,7 @@ begin
   if b1.y = b2.y then
     //  draw top or bootom dimension
     begin
+      fwidthInUnits:=distanceMultiplayRatio;
       targetCanvas.MoveTo(b1.x,b1.y + kam*markerDistance);
       targetCanvas.LineTo(b1.x,b1.y + pomS - kam*markerDistance );
       targetCanvas.MoveTo(b2.x,b2.y + kam*markerDistance );
@@ -1348,6 +1377,7 @@ begin
                  else
     //  draw left or right dimension
     begin
+      FheightInUnits:=distanceMultiplayRatio;
       targetCanvas.MoveTo(b1.x + kam*markerDistance ,b1.y);
       targetCanvas.LineTo(b1.x + pomS - kam*markerDistance ,b1.y );
       targetCanvas.MoveTo(b2.x + kam*markerDistance ,b2.y);
@@ -1907,6 +1937,8 @@ begin
   AddToPropStrings('custExternalHeightDim', FloatToStr(custExternalHeightDim));
   AddToPropStrings('custExternalWidthDim', FloatToStr(custExternalWidthDim));
   AddToPropStrings('custSpecialDimension', FloatToStr(custSpecialDimension));
+  AddToPropStrings('heightInUnits', FloatToStr(heightInUnits));
+  AddToPropStrings('widthInUnits', FloatToStr(widthInUnits));
   if assigned(outsideObject) then
      AddToPropStrings('outsideObject', inttohex(ptrint(outsideObject), 8));
      {the rest eg. adding referenc to insideObject.TComponentList
