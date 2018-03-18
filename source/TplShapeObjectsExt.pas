@@ -70,7 +70,7 @@ begin
   Top := ymin;
   Width := xmax - xmin;
   Height := ymax - ymin;
-  Focused := True;
+  //Focused := True;
   BringToFront;
 
   //get the individual components in
@@ -82,8 +82,8 @@ begin
     Self.InsertComponent(aDraw);
 
     //aDraw.CanMove := false;
-    aDraw.Focused := False;
-    aDraw.CanFocus := False;
+    //aDraw.Focused := False;
+    //aDraw.CanFocus := False;
 
     // Need to control the events and send them to the object.
     { TODO -oTC -cExtension : Add the events here on components }
