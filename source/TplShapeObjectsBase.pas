@@ -1548,7 +1548,7 @@ begin
   fBitmap.ApplyGlobalOpacity(0);
   Draw(fBitmap.CanvasBGRA,0,0);
   //invalidate;
-  fUpdateNeeded := False;
+  fUpdateNeeded:=False;
 end;
 
 procedure TplDrawObject.SetPen(Value: TPenEx);
@@ -1728,7 +1728,9 @@ begin
       //bugfix (2-May-08) ...
       //control disappeared when it had its last remaining button temporarily
       //dragged off parent canvas but wouldn't reappear on returning ...
-      if not IntersectRect(r, self.BoundsRect, parent.ClientRect) then
+      // remove this bugfix (17.3.2018) b/c it causes heavy flickering in my app
+      // and for me it si not possible to reproduce original issue ...
+      //if not IntersectRect(r, self.BoundsRect, parent.ClientRect) then
         InternalResize; //needed because Paint() isn't called
     end
     else if fMoving then
