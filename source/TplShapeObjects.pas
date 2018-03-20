@@ -276,8 +276,10 @@ type
   TplEllipse = class(TplSolidWithText)
   private
     fBalloonPoint: TBalloonPoint;
+    fRatioInUnits: Float;
     fRegular: boolean;
     procedure SetBalloonPoint(BalloonPoint: TBalloonPoint);
+    procedure SetratioInUnits(AValue: Float);
     procedure SetRegular(Value: boolean);
   protected
     procedure SetAngle(aangle: integer); override;
@@ -297,6 +299,7 @@ type
   published
     property BalloonPoint: TBalloonPoint read fBalloonPoint write SetBalloonPoint;
     property Regular: boolean read fRegular write SetRegular;
+    property ratioInUnits:Float read FratioInUnits write SetratioInUnits;
   end;
 
   { TplPolygon }
@@ -3312,6 +3315,16 @@ begin
   UpdateNeeded;
 end;
 
+procedure TplEllipse.SetratioInUnits(AValue: Float);
+begin
+  if FratioInUnits=AValue then Exit;
+  FratioInUnits:=AValue;
+  //fratioForDimensions:=heightInUnits/(height-2*fmarginForDimensions);
+  Height:=round(fratioInUnits/ratioForDimensions+2*marginForDimensions);
+  Width:=Height;
+  self.Loaded;
+end;
+
 procedure TplEllipse.SetAngle(aangle: integer);
 begin
   if aangle <> 0 then
@@ -3603,6 +3616,7 @@ begin
   drawMarker(point2,lineVector,20);
   // draw text
   distance:=(height-2*marginForDimensions); //round(point1.Distance(point2));
+  fRatioInUnits:=distance*self.ratioForDimensions;
   if custSpecialDimension <> 0 then
       dimensionText:=FloatToStrF(custSpecialDimension,ffFixed,4,1)
   else
