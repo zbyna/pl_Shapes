@@ -75,6 +75,7 @@ type
     fBitmap: TBGRABitmap;
     FEnableDrawDimensions: Boolean;
     FheightInUnits: Float;
+    FwidthInUnits: Float;
 
     fmarginForDimensions : Integer;
     foutsideObject: TplDrawObject;
@@ -102,7 +103,6 @@ type
     fStreamID: string;
     fDataStream: TMemoryStream;
     fFocusChangedEvent: TNotifyEvent;
-    FwidthInUnits: Float;
     function GetCustomDimensions(AIndex: Integer): Float;
     function GetshowDimensions(Index: Integer): Boolean;
     procedure SetCustomDimensions(AIndex: Integer; AValue: Float);
@@ -175,10 +175,10 @@ type
     procedure Draw(targetCanvas: TbgraCanvas; offsetX, offsetY: integer);
     procedure DrawOwnDimensions(targetCanvas:TBgraCanvas); virtuaL;
     procedure drawExternalDimensions(targetCanvas:TbgraCanvas); virtual;
-    procedure drawLineWithDimension(targetCanvas: TBGRACanvas;b1,b2:TPoint;kam,
+    function drawLineWithDimension(targetCanvas: TBGRACanvas;b1,b2:TPoint;kam,
                                     markerDistance: integer;
                                     enableMarginForDimensions:Boolean;
-                                    customDim:Float);
+                                    customDim:Float):Float;
     procedure drawSpecialDimensions(targetCanvas:TbgraCanvas); virtual;
     function Clone: TplDrawObject;
     function BtnIdxFromPt(pt: TPoint; ignoreDisabled: boolean; out BtnIdx: integer): boolean;
@@ -1324,11 +1324,11 @@ begin
   end;
 end;
 
-procedure TplDrawObject.drawLineWithDimension(targetCanvas: TBGRACanvas;
+function TplDrawObject.drawLineWithDimension(targetCanvas: TBGRACanvas;
                                               b1,b2:TPoint;
                                               kam,markerDistance:integer;
                                               enableMarginForDimensions:Boolean;
-                                              customDim:Float);
+                                              customDim:Float):Float;
 // markerDistance -  distance from upper and bottom border within
 // marginForDimensions area
 var
@@ -1340,6 +1340,7 @@ var
 begin
   distanceB1B2:=b1.Distance(b2);
   distanceMultiplayRatio:= distanceB1B2*fratioForDimensions;
+  Result:=distanceMultiplayRatio;
   if customDim <> 0 then
       dimensionText:=FloatToStrF(customDim,ffFixed,4,1)
   else
@@ -1355,7 +1356,6 @@ begin
   if b1.y = b2.y then
     //  draw top or bootom dimension
     begin
-      fwidthInUnits:=distanceMultiplayRatio;
       targetCanvas.MoveTo(b1.x,b1.y + kam*markerDistance);
       targetCanvas.LineTo(b1.x,b1.y + pomS - kam*markerDistance );
       targetCanvas.MoveTo(b2.x,b2.y + kam*markerDistance );
@@ -1377,7 +1377,6 @@ begin
                  else
     //  draw left or right dimension
     begin
-      FheightInUnits:=distanceMultiplayRatio;
       targetCanvas.MoveTo(b1.x + kam*markerDistance ,b1.y);
       targetCanvas.LineTo(b1.x + pomS - kam*markerDistance ,b1.y );
       targetCanvas.MoveTo(b2.x + kam*markerDistance ,b2.y);
@@ -1420,49 +1419,53 @@ begin
       if deltaCenters.x > 0 then
         begin
           if showLeftDimension then
-             drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                                TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True,
-                                custHeightDimension)
+             self.fheightInUnits:= drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+                                    TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True,
+                                    custHeightDimension)
         end
       else
         begin
           if showRightDimension then
-             drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
-                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
-                                custHeightDimension);
+             self.fheightInUnits:=drawLineWithDimension(
+                                   targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
+                                   TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
+                                   custHeightDimension);
 
         end;
       if deltaCenters.y > 0 then
         begin
            if showTopDimension then
-              drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+            self.fwidthInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
                                  TPoint.Create(pomRect.Right,pomRect.top),-1,10,True,
                                  custWidthDimension)
         end
       else
         begin
            if showBottomDimension then
-              drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
-                                 TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
-                                 custWidthDimension);
+              self.fwidthInUnits:=drawLineWithDimension(
+                                   targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
+                                   TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
+                                   custWidthDimension);
         end;
     end
   else
     begin
       if  showTopDimension then
-          drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+          self.fwidthInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
                                 TPoint.Create(pomRect.Right,pomRect.top),-1,10,True,
                                 custWidthDimension);
       if  showLeftDimension then
-          drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+          self.fheightInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
                                 TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True,
                                 custHeightDimension);
       if showRightDimension then
-          drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
+          self.fheightInUnits:=drawLineWithDimension(
+                                targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
                                 TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
                                 custHeightDimension);
       if showBottomDimension then
-         drawLineWithDimension(targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
+         self.fwidthInUnits:=drawLineWithDimension(
+                               targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
                                custWidthDimension);
     end;
