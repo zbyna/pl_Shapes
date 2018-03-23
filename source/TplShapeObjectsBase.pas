@@ -177,7 +177,7 @@ type
     procedure drawExternalDimensions(targetCanvas:TbgraCanvas); virtual;
     function drawLineWithDimension(targetCanvas: TBGRACanvas;b1,b2:TPoint;kam,
                                     markerDistance: integer;
-                                    enableMarginForDimensions:Boolean;
+                                    pomEnableMarginForDimensions:Boolean;
                                     customDim:Float):Float;
     procedure drawSpecialDimensions(targetCanvas:TbgraCanvas); virtual;
     function Clone: TplDrawObject;
@@ -1327,7 +1327,7 @@ end;
 function TplDrawObject.drawLineWithDimension(targetCanvas: TBGRACanvas;
                                               b1,b2:TPoint;
                                               kam,markerDistance:integer;
-                                              enableMarginForDimensions:Boolean;
+                                              pomEnableMarginForDimensions:Boolean;
                                               customDim:Float):Float;
 // markerDistance -  distance from upper and bottom border within
 // marginForDimensions area
@@ -1349,7 +1349,7 @@ begin
   targetCanvas.Font.Name:='DejaVu Sans Condensed';
   targetCanvas.Font.Height:=25;
   targetCanvas.Brush.Style:=bsClear;
-  if enableMarginForDimensions then
+  if pomEnableMarginForDimensions then
      pomS:= kam*marginForDimensions
   else
      pomS:=kam;
