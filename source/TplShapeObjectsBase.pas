@@ -1338,7 +1338,7 @@ var
   dimensionText:String;
   lengthDimensionText:Integer;
 begin
-  distanceB1B2:=b1.Distance(b2);
+  distanceB1B2:=b1.Distance(b2)+4*fPen.width;
   distanceMultiplayRatio:= distanceB1B2*fratioForDimensions;
   Result:=distanceMultiplayRatio;
   if customDim <> 0 then
@@ -1409,7 +1409,7 @@ var
 
 begin
   pomRect:=TRect.Create(clientRect);
-  InflateRect(pomRect,-marginForDimensions,-marginForDimensions);
+  InflateRect(pomRect,-marginForDimensions-fPen.Width*2,-marginForDimensions-fPen.Width*2);
   targetCanvas.Pen.Width:=1;
   if outsideObject <> nil then
     begin
