@@ -1365,7 +1365,8 @@ begin
       targetCanvas.Font.Orientation:=0;
       if kam < 0 then
               targetCanvas.TextOut(b1.x + (round(distanceB1B2)-lengthDimensionText) div 2,
-                                   b2.y + pomS,dimensionText)
+                                   b2.y + poms div 2 - targetCanvas.TextHeight('Aa') ,
+                                   dimensionText)
 
 
              else
@@ -1385,7 +1386,7 @@ begin
       targetCanvas.LineTo(b2.x + pomS div 2,b2.y );
       targetCanvas.Font.Orientation:=900;
       if kam < 0 then
-         targetCanvas.TextOut(b1.x + pomS,
+         targetCanvas.TextOut(b1.x + pomS div 2 - targetCanvas.TextHeight('Aa'),
                               b1.y + (round(distanceB1B2)+lengthDimensionText) div 2,
                               dimensionText)
                  else
