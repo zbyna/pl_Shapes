@@ -1347,7 +1347,7 @@ begin
       dimensionText:=FloatToStrF(distanceMultiplayRatio,ffFixed,4,1);
   lengthDimensionText:=targetCanvas.TextWidth(dimensionText);
   targetCanvas.Font.Name:='DejaVu Sans Condensed';
-  targetCanvas.Font.Height:=25;
+  targetCanvas.Font.Height:=(marginForDimensions div 2);
   targetCanvas.Brush.Style:=bsClear;
   if pomEnableMarginForDimensions then
      pomS:= kam*marginForDimensions

@@ -3624,7 +3624,7 @@ begin
                                                   ffFixed,4,1);
   textPosition:= (75 - targetCanvas.TextWidth(dimensionText)) div 2;
   pointForText:=point2 + pointsOnCircle(textPosition);
-  targetCanvas.Font.Height:=25;
+  targetCanvas.Font.Height:=(marginForDimensions div 2);
   targetCanvas.Font.Name:='DejaVu Sans Condensed';
   targetCanvas.Brush.Style:=bsClear;
   targetCanvas.Font.Orientation:=450;
