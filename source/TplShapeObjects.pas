@@ -3730,6 +3730,7 @@ begin
   AddToPropStrings('BalloonPoint', GetEnumProp(self, 'BalloonPoint'));
   if Regular then
     AddToPropStrings('Regular', GetEnumProp(self, 'Regular'));
+  AddToPropStrings('ratioInUnits', FloatToStr(ratioInUnits));
 end;
 
 // ================= TplPolygon =====================================
