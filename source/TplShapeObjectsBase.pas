@@ -947,7 +947,7 @@ end;
 
 procedure TplDrawObject.SetratioForDimensions(AValue: float);
 begin
-  if FratioForDimensions=AValue then Exit;
+  //if FratioForDimensions=AValue then Exit;
   FratioForDimensions:=AValue;
   //fratioForDimensions:=widthInUnits/(width-2*fmarginForDimensions)
   fwidthInUnits:=fratioForDimensions*(width-2*fmarginForDimensions);
