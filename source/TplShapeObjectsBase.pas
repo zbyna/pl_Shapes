@@ -1433,6 +1433,7 @@ procedure TplDrawObject.DrawOwnDimensions(targetCanvas: TBgraCanvas);
 var
    pomRect : TRect;
    outsideCenter,selfCenter,deltaCenters:TPoint;
+   pomInUnits:Float;
 
 begin
   pomRect:=TRect.Create(clientRect);
@@ -1446,55 +1447,86 @@ begin
       if deltaCenters.x > 0 then
         begin
           if showLeftDimension then
-             self.fheightInUnits:= drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+            begin
+             pomInUnits:= drawLineWithDimension(targetCanvas,pomRect.TopLeft,
                                     TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True,
-                                    custHeightDimension)
+                                    custHeightDimension);
+             self.fheightInUnits:=pomInUnits;
+             if not self.zooming then self.fLabelHeightInUnits:=RoundTo(pomInUnits,-2);
+            end;
         end
       else
         begin
           if showRightDimension then
-             self.fheightInUnits:=drawLineWithDimension(
+            begin
+             pomInUnits:=drawLineWithDimension(
                                    targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
                                    TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
                                    custHeightDimension);
-
+             self.fheightInUnits:=pomInUnits;
+             if not self.zooming then self.fLabelHeightInUnits:=RoundTo(pomInUnits,-2);
+           end;
         end;
       if deltaCenters.y > 0 then
         begin
            if showTopDimension then
-            self.fwidthInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+             begin
+               pomInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
                                  TPoint.Create(pomRect.Right,pomRect.top),-1,10,True,
-                                 custWidthDimension)
+                                        custWidthDimension);
+               self.fwidthInUnits:=pomInUnits;
+               if not self.zooming then self.fLabelWidthInUnits:=roundTo(pomInUnits,-2);
+             end;
         end
       else
         begin
            if showBottomDimension then
-              self.fwidthInUnits:=drawLineWithDimension(
+             begin
+              pomInUnits:=drawLineWithDimension(
                                    targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
                                    TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
                                    custWidthDimension);
+              self.fwidthInUnits:=pomInUnits;
+              if not self.zooming then self.fLabelWidthInUnits:=roundTo(pomInUnits,-2);
+             end;
         end;
     end
   else
     begin
       if  showTopDimension then
-          self.fwidthInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+        begin
+          pomInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
                                 TPoint.Create(pomRect.Right,pomRect.top),-1,10,True,
                                 custWidthDimension);
+          self.fwidthInUnits:=pomInUnits;
+          if not self.zooming then self.fLabelWidthInUnits:=roundTo(pomInUnits,-2);
+        end;
       if  showLeftDimension then
-          self.fheightInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
+        begin
+          pomInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
                                 TPoint.Create(pomRect.Left,pomRect.bottom),-1,10,True,
                                 custHeightDimension);
+          self.fheightInUnits:=pomInUnits;
+          if not self.zooming then self.fLabelHeightInUnits:=RoundTo(pomInUnits,-2);
+        end;
       if showRightDimension then
-          self.fheightInUnits:=drawLineWithDimension(
+        begin
+          pomInUnits:=drawLineWithDimension(
                                 targetCanvas,Tpoint.create(pomRect.Right,pomrect.top),
                                 TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
                                 custHeightDimension);
+          self.fheightInUnits:=pomInUnits;
+          if not self.zooming then self.fLabelHeightInUnits:=RoundTo(pomInUnits,-2);
+        end;
       if showBottomDimension then
-         self.fwidthInUnits:=drawLineWithDimension(
+        begin
+         pomInUnits:=drawLineWithDimension(
                                targetCanvas,Tpoint.create(pomRect.left,pomrect.bottom),
                                TPoint.Create(pomRect.Right,pomRect.bottom),1,10,True,
                                custWidthDimension);
+         self.fwidthInUnits:=pomInUnits;
+         if not self.zooming then self.fLabelWidthInUnits:=roundTo(pomInUnits,-2);
+        end;
     end;
   //targetCanvas.brush.Style:=bsClear;
   //targetCanvas.Rectangle(pomRect);

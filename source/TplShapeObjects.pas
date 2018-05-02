@@ -3629,8 +3629,13 @@ begin
   if custSpecialDimension <> 0 then
       dimensionText:=FloatToStrF(custSpecialDimension,ffFixed,4,1)
   else
-      dimensionText:= UnicodeToUTF8(8960)+FloatToStrF(distance*self.ratioForDimensions,
-                                                  ffFixed,4,1);
+   begin
+      dimensionText:= UnicodeToUTF8(8960)+FloatToStrF(
+                                           distance*self.ratioForDimensions,ffFixed,4,1);
+   end;
+  if not self.zooming then
+                FLabelRatioInUnits:=StrToFloat(FloatToStrF(
+                                          distance*self.ratioForDimensions,ffFixed,4,1));
   textPosition:= (75 - targetCanvas.TextWidth(dimensionText)) div 2;
   pointForText:=point2 + pointsOnCircle(textPosition);
   targetCanvas.Font.Height:=(marginForDimensions div 2);
