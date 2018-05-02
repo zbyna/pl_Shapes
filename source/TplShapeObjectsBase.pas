@@ -186,6 +186,7 @@ type
                                     pomEnableMarginForDimensions:Boolean;
                                     customDim:Float):Float;
     procedure drawSpecialDimensions(targetCanvas:TbgraCanvas); virtual;
+    procedure setRatioForDimensionsForZoom(zmenseni,zvetseni:Integer);
     function Clone: TplDrawObject;
     function BtnIdxFromPt(pt: TPoint; ignoreDisabled: boolean; out BtnIdx: integer): boolean;
     function ObjectMidPoint: TPoint;
@@ -983,6 +984,12 @@ begin
   self.Loaded;
 end;
 
+procedure TplDrawObject.setRatioForDimensionsForZoom(zmenseni, zvetseni: Integer
+  );
+begin
+  FratioForDimensions:=fratioForDimensions * zmenseni/zvetseni;
+end;
+
 procedure TplDrawObject.SetoutsideObject(AValue: TplDrawObject);
 begin
   if FoutsideObject=AValue then Exit;
@@ -1473,7 +1480,7 @@ begin
            if showTopDimension then
              begin
                pomInUnits:=drawLineWithDimension(targetCanvas,pomRect.TopLeft,
-                                 TPoint.Create(pomRect.Right,pomRect.top),-1,10,True,
+                                        TPoint.Create(pomRect.Right,pomRect.top),-1,10,True,
                                         custWidthDimension);
                self.fwidthInUnits:=pomInUnits;
                if not self.zooming then self.fLabelWidthInUnits:=roundTo(pomInUnits,-2);
