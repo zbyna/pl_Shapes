@@ -276,9 +276,11 @@ type
   TplEllipse = class(TplSolidWithText)
   private
     fBalloonPoint: TBalloonPoint;
+    FLabelRatioInUnits: Float;
     fRatioInUnits: Float;
     fRegular: boolean;
     procedure SetBalloonPoint(BalloonPoint: TBalloonPoint);
+    procedure SetLabelRatioInUnits(AValue: Float);
     procedure SetratioInUnits(AValue: Float);
     procedure SetRegular(Value: boolean);
   protected
@@ -300,6 +302,7 @@ type
     property BalloonPoint: TBalloonPoint read fBalloonPoint write SetBalloonPoint;
     property Regular: boolean read fRegular write SetRegular;
     property ratioInUnits:Float read FratioInUnits write SetratioInUnits;
+    property labelRatioInUnits:Float read FLabelRatioInUnits write SetLabelRatioInUnits;
   end;
 
   { TplPolygon }
@@ -3313,6 +3316,12 @@ begin
     exit;
   fBalloonPoint := BalloonPoint;
   UpdateNeeded;
+end;
+
+procedure TplEllipse.SetLabelRatioInUnits(AValue: Float);
+begin
+  if FLabelRatioInUnits=AValue then Exit;
+  FLabelRatioInUnits:=AValue;
 end;
 
 procedure TplEllipse.SetratioInUnits(AValue: Float);

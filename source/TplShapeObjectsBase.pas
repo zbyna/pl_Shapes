@@ -74,6 +74,8 @@ type
   private
     fBitmap: TBGRABitmap;
     FEnableDrawDimensions: Boolean;
+    fLabelHeightInUnits: float;
+    fLabelWidthInUnits: float;
     FheightInUnits: Float;
     FwidthInUnits: Float;
 
@@ -103,15 +105,19 @@ type
     fStreamID: string;
     fDataStream: TMemoryStream;
     fFocusChangedEvent: TNotifyEvent;
+    Fzooming: Boolean;
     function GetCustomDimensions(AIndex: Integer): Float;
     function GetshowDimensions(Index: Integer): Boolean;
     procedure SetCustomDimensions(AIndex: Integer; AValue: Float);
+    procedure SetLabelHeightInUnits(AValue: float);
+    procedure SetLabelWidthInUnits(AValue: float);
     procedure SetheightInUnits(AValue: Float);
     procedure SetmarginForDimensions(AValue: integer);
     procedure SetratioForDimensions(AValue: float);
     procedure SetshowDimensions(Index: Integer; AValue: Boolean);
     procedure SetEnableDrawDimensions(AValue: Boolean);
     procedure SetwidthInUnits(AValue: Float);
+    procedure Setzooming(AValue: Boolean);
     procedure WriteBtnData(S: TStream);
     procedure WriteData(S: TStream);
     procedure ReadBtnData(S: TStream);
@@ -198,6 +204,9 @@ type
     property showDimensions [Index: Integer]: Boolean read GetshowDimensions write SetshowDimensions;
     property customDimensions [Index: Integer]: Float read GetCustomDimensions write SetCustomDimensions;
   published
+    property labelHeightInUnits:float read fLabelHeightInUnits write SetLabelHeightInUnits;
+    property labelWidthInUnits:float read fLabelWidthInUnits write SetLabelWidthInUnits;
+    property zooming:Boolean read Fzooming write Setzooming;
     property ratioForDimensions : float read FratioForDimensions write SetratioForDimensions;
     property marginForDimensions : integer read fmarginForDimensions write SetmarginForDimensions;
     property showLeftDimension: Boolean index 1  read GetshowDimensions write SetshowDimensions;
@@ -899,6 +908,11 @@ begin
   self.Loaded;
 end;
 
+procedure TplDrawObject.Setzooming(AValue: Boolean);
+begin
+  if Fzooming=AValue then Exit;
+  Fzooming:=AValue;
+end;
 procedure TplDrawObject.SetheightInUnits(AValue: Float);
 begin
   if (FheightInUnits=AValue) or (AValue=0) then Exit;
@@ -934,6 +948,18 @@ begin
         fCustomDimensions[aIndex]:=aValue;
         Loaded;
      end;
+end;
+
+procedure TplDrawObject.SetLabelHeightInUnits(AValue: float);
+begin
+  if fLabelHeightInUnits=AValue then Exit;
+  fLabelHeightInUnits:=AValue;
+end;
+
+procedure TplDrawObject.SetLabelWidthInUnits(AValue: float);
+begin
+  if fLabelWidthInUnits=AValue then Exit;
+  fLabelWidthInUnits:=AValue;
 end;
 
 procedure TplDrawObject.SetmarginForDimensions(AValue: integer);
