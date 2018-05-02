@@ -901,7 +901,7 @@ end;
 
 procedure TplDrawObject.SetwidthInUnits(AValue: Float);
 begin
-  if (FwidthInUnits=AValue) or (AValue=0) then Exit;
+  //if (FwidthInUnits=AValue) or (AValue=0) then Exit;
   FwidthInUnits:=AValue;
   //fratioForDimensions:=widthInUnits/(width-2*fmarginForDimensions);
   width:=round(widthInUnits/fratioForDimensions+2*fmarginForDimensions);
@@ -913,9 +913,10 @@ begin
   if Fzooming=AValue then Exit;
   Fzooming:=AValue;
 end;
+
 procedure TplDrawObject.SetheightInUnits(AValue: Float);
 begin
-  if (FheightInUnits=AValue) or (AValue=0) then Exit;
+  //if (FheightInUnits=AValue) or (AValue=0) then Exit;
   FheightInUnits:=AValue;
   //fratioForDimensions:=heightInUnits/(height-2*fmarginForDimensions);
   Height:=round(heightInUnits/fratioForDimensions+2*fmarginForDimensions);

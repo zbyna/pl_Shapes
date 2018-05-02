@@ -3326,7 +3326,7 @@ end;
 
 procedure TplEllipse.SetratioInUnits(AValue: Float);
 begin
-  if FratioInUnits=AValue then Exit;
+  //if FratioInUnits=AValue then Exit;
   FratioInUnits:=AValue;
   //fratioForDimensions:=heightInUnits/(height-2*fmarginForDimensions);
   Height:=round(fratioInUnits/ratioForDimensions+2*marginForDimensions);
