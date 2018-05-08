@@ -10,7 +10,7 @@ interface
 uses
   SysUtils, Classes, LMessages, Controls, Graphics, Math,
   Forms, TypInfo, ZLib,BGRABitmap,BGRACanvas,BGRAGraphicControl,BGRABitmapTypes,
-  Dialogs,contnrs;
+  Dialogs,contnrs,zstream;
 
 const
 
@@ -1947,16 +1947,17 @@ var
       //compress the data ...
       fDataStream.Position := 0;
       { TODO -oTC -cLazarus_Port_Step1 : TCompressionStream not found }
-      //with TCompressionStream.Create(clDefault, outStream) do
-      //try
-      //  CopyFrom(fDataStream, 0);
-      //finally
-      //  Free; //must be freed to flush outStream
-      //end;
+      with TCompressionStream.Create(clDefault, outStream) do
+      try
+        CopyFrom(fDataStream, 0);
+      finally
+        Free; //must be freed to flush outStream
+      end;
       //now write the data to PropStrings ...
       outStream.Position := 0;
       AddToPropStrings('Data', '{');
       cnt := outStream.Size;
+      //ShowMessage(format('cnt je %d',[cnt]));
       while cnt > 0 do
       begin
         if cnt >= 32 then
@@ -2039,7 +2040,7 @@ var
   hexSrc: PChar;
   inStream: TMemoryStream;
   { TODO -oTC -cLazarus_Port_Step1 : TDecompressStream not found }
-  //TCQdecompStream: TDecompressionStream;
+  TCQdecompStream: TDecompressionStream;
 begin
   //format (nb: contained lines all indented 2 spaces) -
   //Data={
@@ -2067,17 +2068,17 @@ begin
         //now decompress data to fDataStream ...
         inStream.Position := 0;
         { TODO -oTC -cLazarus_Port_Step1 : TDecompressStream not found }
-        //TCQ decompStream := TDecompressionStream.Create(inStream);
-        //try
-        //  cnt := decompStream.Read(Buffer, BufferSize);
-        //  while cnt > 0 do
-        //  begin
-        //    fDataStream.WriteBuffer(Buffer, cnt);
-        //    cnt := decompStream.Read(Buffer, BufferSize);
-        //   end;
-        //finally
-        //  DecompStream.Free;
-        //end;
+        TCQdecompStream := TDecompressionStream.Create(inStream);
+        try
+          cnt := TCQdecompStream.Read(Buffer, BufferSize);
+          while cnt > 0 do
+          begin
+            fDataStream.WriteBuffer(Buffer, cnt);
+            cnt := TCQdecompStream.Read(Buffer, BufferSize);
+           end;
+        finally
+          TCQDecompStream.Free;
+        end;
         //finally notify descendant components that data was loaded ...
         BinaryDataLoaded;
       end;
