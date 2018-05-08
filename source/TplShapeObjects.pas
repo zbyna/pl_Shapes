@@ -181,13 +181,17 @@ type
   end;
 
 
+  { TplDrawPicture }
+
   TplDrawPicture = class(TplSolid)
   private
     //fPic: TBitmap;
     fpic:TBGRABitmap;
+    FpictureFileName: AnsiString;
     fStretch: boolean;
     fTransparent: boolean;
     fTightConnections: boolean;
+    procedure SetpictureFileName(AValue: AnsiString);
     procedure SetStretch(Stretch: boolean);
     procedure SetTransparent(Transparent: boolean);
     procedure SetTightConnections(Value: boolean);
@@ -208,6 +212,7 @@ type
     function MergeDrawObjImage(DrawObj: TplDrawObject; TransparentClr: TColor): boolean;
     procedure Rotate(degrees: integer); override;
   published
+    property pictureFileName:AnsiString read FpictureFileName write SetpictureFileName;
     property Angle: integer read GetAngle write SetAngle;
     property Stretch: boolean read fStretch write SetStretch;
     property Transparent: boolean read fTransparent write SetTransparent;
@@ -2591,6 +2596,15 @@ procedure TplDrawPicture.LoadPicFromDataStream;
 var
   pomPic:Tpicture;
 begin
+  if (self.pictureFileName = '') and (self.DataStream.Size = 0) then exit;
+  if self.pictureFileName = 'clear' then
+     begin
+      fpic.destroy; // did not find any other way how to erase and clean fpic :-(
+      fpic := TBGRABitmap.create;
+      self.UpdateNeeded;
+      self.FpictureFileName:=''; // nutno obejít setter :-)
+      exit;
+     end;
   try
     DataStream.Position := 0;
     pomPic:=TPicture.Create;
@@ -2618,7 +2632,11 @@ begin
         Bitmap.SetSize(Width,Height);
       end;
   except
-    DataStream.Size := 0;
+    begin
+      DataStream.Size := 0;
+      pomPic.destroy;
+      UpdateNeeded;
+    end;
   end;
   UpdateNeeded;
 end;
@@ -2752,6 +2770,19 @@ begin
    begin
      UpdateNeeded;
    end;
+end;
+
+procedure TplDrawPicture.SetpictureFileName(AValue: AnsiString);
+begin
+  if (FpictureFileName=AValue) or (AValue = '') then Exit;
+  FpictureFileName:=AValue;
+  if AValue = 'clear' then
+     begin
+       self.DataStream.clear;
+       self.LoadPicFromDataStream;
+     end
+  else
+      self.LoadPicFromFile(AValue);
 end;
 
 procedure TplDrawPicture.SetTransparent(Transparent: boolean);
