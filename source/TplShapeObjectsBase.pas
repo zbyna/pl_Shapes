@@ -77,6 +77,7 @@ type
     fLabelHeightInUnits: float;
     fLabelWidthInUnits: float;
     FheightInUnits: Float;
+    FtagForWizard: String;
     FwidthInUnits: Float;
 
     fmarginForDimensions : Integer;
@@ -116,6 +117,7 @@ type
     procedure SetratioForDimensions(AValue: float);
     procedure SetshowDimensions(Index: Integer; AValue: Boolean);
     procedure SetEnableDrawDimensions(AValue: Boolean);
+    procedure SettagForWizard(AValue: String);
     procedure SetwidthInUnits(AValue: Float);
     procedure Setzooming(AValue: Boolean);
     procedure WriteBtnData(S: TStream);
@@ -205,6 +207,7 @@ type
     property showDimensions [Index: Integer]: Boolean read GetshowDimensions write SetshowDimensions;
     property customDimensions [Index: Integer]: Float read GetCustomDimensions write SetCustomDimensions;
   published
+    property tagForWizard:String read FtagForWizard write SettagForWizard;
     property labelHeightInUnits:float read fLabelHeightInUnits write SetLabelHeightInUnits;
     property labelWidthInUnits:float read fLabelWidthInUnits write SetLabelWidthInUnits;
     property zooming:Boolean read Fzooming write Setzooming;
@@ -898,6 +901,12 @@ begin
        fUpdateNeeded:=True;
        self.Loaded;
      end;
+end;
+
+procedure TplDrawObject.SettagForWizard(AValue: String);
+begin
+  if FtagForWizard=AValue then Exit;
+  FtagForWizard:=AValue;
 end;
 
 procedure TplDrawObject.SetwidthInUnits(AValue: Float);
@@ -2012,6 +2021,7 @@ begin
   AddToPropStrings('custSpecialDimension', FloatToStr(custSpecialDimension));
   AddToPropStrings('heightInUnits', FloatToStr(heightInUnits));
   AddToPropStrings('widthInUnits', FloatToStr(widthInUnits));
+  AddToPropStrings('tagForWizard', tagForWizard);
   if assigned(outsideObject) then
      AddToPropStrings('outsideObject', inttohex(ptrint(outsideObject), 8));
      {the rest eg. adding referenc to insideObject.TComponentList
@@ -2191,6 +2201,8 @@ begin
             // by zbyna strtoint() replace by StrToIntDef();
             tkInteger    :SetPropValue(self, propName, StrToIntDef(propVal,0));
             tkLString    :SetPropValue(self, propName, propVal);
+            // for tagForWizard property, which is String type
+            tkSString    :SetPropValue(self, propName, propVal);
             tkSet        :SetSetProp(self, propName, propVal);
             tkFloat      :SetFloatProp(self,propName,StrToFloat(propVal));
             tkClass:
