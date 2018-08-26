@@ -188,10 +188,12 @@ type
     //fPic: TBitmap;
     fpic:TBGRABitmap;
     FpictureFileName: AnsiString;
+    FshowBorder: Boolean;
     fStretch: boolean;
     fTransparent: boolean;
     fTightConnections: boolean;
     procedure SetpictureFileName(AValue: AnsiString);
+    procedure SetshowBorder(AValue: Boolean);
     procedure SetStretch(Stretch: boolean);
     procedure SetTransparent(Transparent: boolean);
     procedure SetTightConnections(Value: boolean);
@@ -212,6 +214,7 @@ type
     function MergeDrawObjImage(DrawObj: TplDrawObject; TransparentClr: TColor): boolean;
     procedure Rotate(degrees: integer); override;
   published
+    property showBorder:Boolean read FshowBorder write SetshowBorder;
     property pictureFileName:AnsiString read FpictureFileName write SetpictureFileName;
     property Angle: integer read GetAngle write SetAngle;
     property Stretch: boolean read fStretch write SetStretch;
@@ -2563,6 +2566,7 @@ begin
   DataStream := TMemoryStream.Create;
   Pen.Width := 1;
   ShadowSize := 0;
+  showBorder:=False;
   DoSaveInfo;
 end;
 
@@ -2685,7 +2689,8 @@ begin
   end;
 end;
 
-procedure PrintBitmap(DestCanvas: TbgraCanvas; DestRect: TRect; Bitmap: TbgraBitmap);
+procedure PrintBitmap(DestCanvas: TbgraCanvas; DestRect: TRect; Bitmap: TbgraBitmap;
+                      showBorder:Boolean);
 var
   transpClr: TColor;
   mask: TBitmap;
@@ -2725,6 +2730,12 @@ begin
     //  end;
     //end;
     DestCanvas.Draw(DestRect.Top ,DestRect.Left,Bitmap);
+    if showBorder then
+        begin
+          DestCanvas.Pen.Width:=2;
+          DestCanvas.Frame(DestRect);
+          DestCanvas.Pen.Width:=1;
+        end;
   end
   else
     PrintBitmapROP(DestCanvas, DestRect, Bitmap, SRCCOPY);
@@ -2751,7 +2762,7 @@ begin
   pom:=TBGRABitmap.Create;
   BGRAReplace(pom, fpic.Resample(tmpRect.Width,tmpRect.Height,rmSimpleStretch));
   if Transparent  then  pom.ApplyGlobalOpacity(128);
-  PrintBitmap(aCanvas, tmpRect, pom);
+  PrintBitmap(aCanvas, tmpRect, pom,self.showBorder);
   pom.Destroy;
 end;
 
@@ -2783,6 +2794,13 @@ begin
      end
   else
       self.LoadPicFromFile(AValue);
+end;
+
+procedure TplDrawPicture.SetshowBorder(AValue: Boolean);
+begin
+  if FshowBorder=AValue then Exit;
+  FshowBorder:=AValue;
+  UpdateNeeded;
 end;
 
 procedure TplDrawPicture.SetTransparent(Transparent: boolean);
@@ -2883,6 +2901,8 @@ begin
     AddToPropStrings('Stretch', GetEnumProp(self, 'Stretch'));
   if TightConnections then
     AddToPropStrings('TightConnections', GetEnumProp(self, 'TightConnections'));
+  if showBorder then
+     AddToPropStrings('showBorder', GetEnumProp(self, 'showBorder'));;
 end;
 
 function TplDrawPicture.MergeDrawObjImage(DrawObj: TplDrawObject; TransparentClr: TColor): boolean;
