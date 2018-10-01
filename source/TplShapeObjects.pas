@@ -2564,7 +2564,7 @@ begin
   inherited;
   fpic := TBGRABitmap.create;
   DataStream := TMemoryStream.Create;
-  Pen.Width := 1;
+  //Pen.Width := 1;
   ShadowSize := 0;
   showBorder:=False;
   DoSaveInfo;
