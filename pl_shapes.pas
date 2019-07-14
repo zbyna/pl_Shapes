@@ -9,7 +9,7 @@ interface
 
 uses
   AllplShapesRegister, TplFillShapeUnit, TplShapeLineUnit, TplShapeObjects, 
-  TplShapeObjectsBase, TplShapeObjectsExt, TplShapesUnit, LazarusPackageIntf;
+  TplShapeObjectsBase, TplShapeObjectsExt, TplShapesUnit, TyphonPackageIntf;
 
 implementation
 
